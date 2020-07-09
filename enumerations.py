@@ -16,7 +16,7 @@ class Result(enum.IntEnum):
     @property
     def text(self):
         #  split string
-        return ' '.join([x for x in self.name.split('_')]).title()
+        return " ".join([x for x in self.name.split("_")]).title()
 
     @property
     def win(self):
@@ -52,6 +52,7 @@ class Year(enum.Enum):
     SO = "Sophomore"
     JR = "Junior"
     SR = "Senior"
+
 
 # labels section
 class CollegeLabel(enum.IntEnum):
@@ -95,4 +96,3 @@ class HighSchoolLabel(enum.IntEnum):
 	TOP = 0
 	NEU = 0
 	DEFER = 0
-
