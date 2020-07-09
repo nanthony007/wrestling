@@ -23,7 +23,7 @@ class Event(object):
                                                                 "Dual Meet"))])
 
     @event_id.validator
-    def check_event_id(self, attrib, val):
+    def _check_event_id(self, _, val):
         if len(val) < 20 or len(val) > 50:
             raise ValueError(f'Expected str `event_id` with 20 <= len <= 50, '
                              f'got "{val}"')
