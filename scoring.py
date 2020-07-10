@@ -8,10 +8,6 @@ from datetime import time
 
 from enumerations import CollegeLabel, HighSchoolLabel
 
-
-# todo: focus score and opponent score throughout match
-# --> private attributes in scoring event (init=False) updated from match class?
-
 # todo: add subclass for custom actions (which takes custom Labels Enum)
 
 
@@ -34,20 +30,6 @@ class ScoringEvent(object):
     def formatted_time(self):
         return time.strftime(self.time_stamp, "%M:%S")
 
-    @property
-    def formatted_label(self):
-        if self.focus_color == self.initiator:
-            return f"f{self.label.name}"
-        elif self.focus_color != self.initiator:
-            return f"o{self.label.name}"
-        else:
-            raise ValueError(
-                f'Expected "red" or "green" '
-                f"for `focus_color` AND "
-                f"`initiator`, got {self.focus_color} and "
-                f"{self.initiator}."
-            )
-
 
 @attr.s(frozen=True, slots=True, eq=True, order=True, auto_attribs=True, kw_only=True)
 class CollegeScoring(ScoringEvent):
@@ -67,6 +49,20 @@ class CollegeScoring(ScoringEvent):
             raise ValueError(
                 f"Unexpected time value: {self.time_stamp}, "
                 f"could not determine `period`."
+            )
+
+    @property
+    def formatted_label(self):
+        if self.focus_color == self.initiator:
+            return f"f{self.label.name}"
+        elif self.focus_color != self.initiator:
+            return f"o{self.label.name}"
+        else:
+            raise ValueError(
+                f'Expected "red" or "green" '
+                f"for `focus_color` AND "
+                f"`initiator`, got {self.focus_color} and "
+                f"{self.initiator}."
             )
 
 
@@ -90,4 +86,18 @@ class HighSchoolScoring(ScoringEvent):
             raise ValueError(
                 f"Unexpected time value: {self.time_stamp}, "
                 f"could not determine `period`."
+            )
+
+    @property
+    def formatted_label(self):
+        if self.focus_color == self.initiator:
+            return f"f{self.label.name}"
+        elif self.focus_color != self.initiator:
+            return f"o{self.label.name}"
+        else:
+            raise ValueError(
+                f'Expected "red" or "green" '
+                f"for `focus_color` AND "
+                f"`initiator`, got {self.focus_color} and "
+                f"{self.initiator}."
             )
