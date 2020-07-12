@@ -9,18 +9,16 @@ from attr.validators import instance_of, in_
 from typing import Optional, Union, Set
 from datetime import datetime
 from urllib.parse import quote
-from collections import Counter
 
-
-from valid_sequences import college_sequences, hs_sequences
-from enumerations import Result, CollegeLabel
-from events import Event
-from scoring import CollegeScoring, HighSchoolScoring
-from wrestlers import CollegeWrestler, HighSchoolWrestler
-
+from wrestling.valid_sequences import college_sequences, hs_sequences
+from wrestling.enumerations import Result
+from wrestling.events import Event
+from wrestling.scoring import CollegeScoring, HighSchoolScoring
+from wrestling.wrestlers import CollegeWrestler, HighSchoolWrestler
 
 _college_weights = (125, 133, 141, 149, 157, 165, 174, 184, 197, 285)
-_high_school_weights = (106, 113, 120, 126, 132, 138, 145, 152, 160, 170, 182, 195, 220, 285)
+_high_school_weights = (
+106, 113, 120, 126, 132, 138, 145, 152, 160, 170, 182, 195, 220, 285)
 
 
 def _convert_ts(ts):

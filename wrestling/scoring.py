@@ -6,7 +6,7 @@ from attr.validators import in_, instance_of
 
 from datetime import time
 
-from enumerations import CollegeLabel, HighSchoolLabel
+from wrestling.enumerations import CollegeLabel, HighSchoolLabel
 
 # todo: add subclass for custom actions (which takes custom Labels Enum)
 
