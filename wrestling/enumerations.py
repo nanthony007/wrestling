@@ -1,3 +1,4 @@
+import aenum
 import enum
 
 
@@ -55,7 +56,7 @@ class Year(enum.Enum):
 
 
 # labels section
-class CollegeLabel(enum.IntEnum):
+class CollegeLabel(aenum.IntEnum, settings=aenum.NoAlias):
 	# points section
 	T2 = 2
 	N2 = 2
@@ -77,7 +78,7 @@ class CollegeLabel(enum.IntEnum):
 	DEFER = 0
 
 
-class HighSchoolLabel(enum.IntEnum):
+class HighSchoolLabel(aenum.IntEnum, settings=aenum.NoAlias):
 	# points section
 	T2 = 2
 	N2 = 2
