@@ -3,7 +3,6 @@
 
 from typing import Dict
 import re
-import structures
 
 
 def parse_name(wrestler_string) -> str:
@@ -21,34 +20,42 @@ def parse_team(wrestler_string) -> str:
     return team
 
 
-def parse_results(winner: str, result: str, team_pts: int) -> Dict[str, str]:
-    if result.startswith("Dec"):
-        formatted_result = "Decision"
-    elif result.startswith("Maj"):
-        formatted_result = "Major"
-    elif result.startswith("Tech"):
-        formatted_result = "Tech"
-    elif result.startswith("Fall"):
-        formatted_result = "Fall"
-    elif result.startswith("Dis"):
-        formatted_result = "Disqualification"
-    elif result.startswith("Def"):
-        formatted_result = "Default"
-    elif result.startswith("For"):
-        formatted_result = "Forfeit"
-    elif result.startswith("Double"):  # weird? double forfeift
-        formatted_result = "Forfeit"
-    else:
-        raise ValueError(result)
+def parse_results(win: int, result: str) -> Dict[str, str]:
+	if result.startswith("Dec"):
+		formatted_result = "Decision"
+		team_points = 3
+	elif result.startswith("Maj"):
+		formatted_result = "Major"
+		team_points = 4
+	elif result.startswith("Tech"):
+		formatted_result = "Tech"
+		team_points = 5
+	elif result.startswith("Fall"):
+		formatted_result = "Fall"
+		team_points = 6
+	elif result.startswith("Dis"):
+		formatted_result = "Disqualification"
+		team_points = 0
+	elif result.startswith("Def"):
+		formatted_result = "Default"
+		team_points = 0
+	elif result.startswith("For"):
+		formatted_result = "Forfeit"
+		team_points = 0
+	elif result.startswith("Double"):  # weird? double forfeit
+		formatted_result = "Forfeit"
+		team_points = 0
+	else:
+		raise ValueError(result)
 
     return {
-        "base_result": "Win" if winner == 1 else "Loss",  # there are 2s for
-        # double forfeits
-        "method": formatted_result,
-        "overtime": True if "(" in result else False,
-        "team_points": team_pts if winner == 1 else 0,  # 0 if loss
-        "text_result": f"{'Win' if winner == 1 else 'Loss'}-{formatted_result}",
-    }
+		"base_result": "Win" if win == 1 else "Loss",  # there are 2s for
+		# double forfeits
+		"method": formatted_result,
+		"overtime": True if "(" in result else False,  # NO, not valid usage
+		"team_points": team_points if win == 1 else team_points * -1,
+		"text_result": f"{'Win' if win == 1 else 'Loss'}-{formatted_result}",
+	}
 
 
 def calculate_numeric_result(text_result):
@@ -83,10 +90,10 @@ def calculate_numeric_result(text_result):
 def calculate_td_diff(obj):
     fT2 = 0
     oT2 = 0
-    if 'focus_T2' in dir(obj):
-        fT2 = obj.focus_T2
-    if 'opp_T2' in dir(obj):
-        oT2 = obj.opp_T2
+	if "focus_T2" in dir(obj):
+		fT2 = obj.focus_T2
+	if "opp_T2" in dir(obj):
+		oT2 = obj.opp_T2
     return fT2 - oT2
 
 
@@ -153,21 +160,21 @@ def add_ts_scoring(obj, level_toggle):
 
 def generate_time_series(obj, actions, toggle):
     scoring_events = (
-        [structures.HighSchoolScoringEvent(focus=obj.focus_color)]
-        if toggle == "high_school"
-        else [structures.CollegeScoringEvent(focus=obj.focus_color)]
+		[HighSchoolScoringEvent(focus=obj.focus_color)]
+		if toggle == "high_school"
+		else [CollegeScoringEvent(focus=obj.focus_color)]
     )
     if len(actions) == 0:
         return scoring_events
     for action in actions.split("#"):
-        if action == "****" or action.split('*')[0] == 'NaN':
-            continue  # skipping this error as its no event
-        if len(action.split("*")) != 5 or len(action) == 0:
-            if action == "0*0*0*Forfeit*Red0*0*0*Forfeit*Red":
-                continue  # this is a storage error on John's side
-            raise ValueError(
-                f"Length of scoring event: {len(action)}. " f"Action: {action}"
-            )
+		if action == "****" or action.split("*")[0] == "NaN":
+			continue  # skipping this error as its no event
+		if len(action.split("*")) != 5 or len(action) == 0:
+			if action == "0*0*0*Forfeit*Red0*0*0*Forfeit*Red":
+				continue  # this is a storage error on John's side
+			raise ValueError(
+				f"Length of scoring event: {len(action)}. " f"Action: {action}"
+			)
 
         action_dict = {
             "minute": int(action.split("*")[0]),
@@ -177,9 +184,9 @@ def generate_time_series(obj, actions, toggle):
             "owner": action.split("*")[4],
         }
         new_event = (
-            structures.HighSchoolScoringEvent(focus=obj.focus_color, **action_dict)
-            if toggle == "high_school"
-            else structures.CollegeScoringEvent(focus=obj.focus_color, **action_dict)
+			HighSchoolScoringEvent(focus=obj.focus_color, **action_dict)
+			if toggle == "high_school"
+			else CollegeScoringEvent(focus=obj.focus_color, **action_dict)
         )
         scoring_events.append(new_event)
     return scoring_events
