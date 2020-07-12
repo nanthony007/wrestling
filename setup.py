@@ -23,7 +23,8 @@ setup(
     packages=find_packages(),
     install_requires=requirements,
     classifiers=[
-        "Programming Language :: Python :: 3.8",
-        "License :: OSI Approved :: MIT Licence",
+        "Programming Language::Python::3.8",
+        "License:: OSI Approved::MIT Licence",
+        "Development Status::4-Beta",
     ],
 )
