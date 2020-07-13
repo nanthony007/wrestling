@@ -10,7 +10,7 @@ from typing import Optional, Union, Set
 from datetime import datetime
 from urllib.parse import quote
 
-from wrestling.valid_sequences import college_sequences, hs_sequences
+from wrestling.sequences import isvalid_sequence
 from wrestling.enumerations import Result
 from wrestling.events import Event
 from wrestling.scoring import CollegeScoring, HighSchoolScoring
@@ -38,58 +38,6 @@ _high_school_weights = (
 def _convert_ts(ts):
     # converts to sorted set
     return set(sorted(ts))
-
-
-# checks formatted label strings (fT2 or oE1)
-# checks value and evaluates list of possible next values
-def isvalid_sequence(level: str, time_series: Tuple):
-    assert level in {"college", "high school"}, (
-        f"Expected `level` to be one of "
-        f"'college' or 'high school', "
-        f"got {level!r}."
-    )
-    # aliases sequences based on level
-    sequences = college_sequences if level == "college" else hs_sequences
-    position = "neutral"
-    # skips iteration the last value because we check the next
-    for i, score in enumerate(time_series[:-1]):
-        assert (
-                time_series[i].time_stamp < time_series[i + 1].time_stamp
-        ), f"Values in `time_series` appear to be sorted incorrectly."
-        lab = score.formatted_label
-        if position == "neutral":
-            assert lab in sequences["neutral"], (
-                f"Not a valid neutral move, expected one of"
-                f" {sequences['neutral']}, but got {lab}."
-            )
-            if lab == "fT2":
-                position = "top"
-            elif lab == "oT2":
-                position = "bottom"
-        elif position == "top":
-            assert lab in sequences["top"], (
-                f"Not a valid neutral move, expected one of"
-                f" {sequences['top']}, but got {lab}."
-            )
-            if lab == "oE1":
-                position = "neutral"
-            elif lab == "oR2":
-                position = "bottom"
-        elif position == "bottom":
-            assert lab in sequences["bottom"], (
-                f"Not a valid neutral move, expected one of"
-                f" {sequences['bottom']}, but got {lab}."
-            )
-            if lab == "fE1":
-                position = "neutral"
-            elif lab == "fR2":
-                position = "top"
-        else:
-            raise ValueError(
-                f"Invalid `position`, expected one of ['neutral', "
-                f"'top', 'bottom'], got {position!r}."
-            )
-    return True
 
 
 @attr.s(frozen=True, slots=True, order=True, eq=True, kw_only=True, auto_attribs=True)

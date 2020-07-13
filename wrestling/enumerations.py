@@ -13,16 +13,16 @@ class Result(enum.IntEnum):
 	WIN_FALL = 4
 	LOSS_DECISION = -1
 	LOSS_MAJOR = -2
-    LOSS_TECH = -3
-    LOSS_FALL = -4
+	LOSS_TECH = -3
+	LOSS_FALL = -4
 
-    @property
-    def text(self):
-        #  split string
-        return " ".join([x for x in self.name.split("_")]).title()
+	@property
+	def text(self):
+		#  split string
+		return " ".join([x for x in self.name.split("_")]).title()
 
-    @property
-    def win(self):
+	@property
+	def win(self):
         return True if self.value > 0 else False
 
     @property
