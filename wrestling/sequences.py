@@ -63,7 +63,7 @@ def isvalid_sequence(level: str, time_series: Tuple):
     # skips iteration the last value because we check the next
     for i, score in enumerate(time_series[:-1]):
         assert (
-                time_series[i].time_stamp < time_series[i + 1].time_stamp
+                time_series[i].time_stamp <= time_series[i + 1].time_stamp
         ), f"Values in `time_series` appear to be sorted incorrectly."
         lab = score.formatted_label
         if position == "neutral":
@@ -71,27 +71,27 @@ def isvalid_sequence(level: str, time_series: Tuple):
                 f"Not a valid neutral move, expected one of"
                 f" {sequences['neutral']}, but got {lab}."
             )
-            if lab == "fT2":
+            if lab == "fT2" or lab == "oBOT":
                 position = "top"
-            elif lab == "oT2":
+            elif lab == "oT2" or lab == "fBOT":
                 position = "bottom"
         elif position == "top":
             assert lab in sequences["top"], (
                 f"Not a valid neutral move, expected one of"
                 f" {sequences['top']}, but got {lab}."
             )
-            if lab == "oE1":
+            if lab == "oE1" or lab == "fNEU" or lab == "oNEU":
                 position = "neutral"
-            elif lab == "oR2":
+            elif lab == "oR2" or lab == "fBOT" or lab == "oTOP":
                 position = "bottom"
         elif position == "bottom":
             assert lab in sequences["bottom"], (
                 f"Not a valid neutral move, expected one of"
                 f" {sequences['bottom']}, but got {lab}."
             )
-            if lab == "fE1":
+            if lab == "fE1" or lab == "fNEU" or lab == "oNEU":
                 position = "neutral"
-            elif lab == "fR2":
+            elif lab == "fR2" or lab == "oBOT" or lab == "fTOP":
                 position = "top"
         else:
             raise ValueError(

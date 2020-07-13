@@ -6,7 +6,7 @@
 import attr
 from attr.validators import instance_of, in_
 
-from typing import Optional, Union, Set
+from typing import Optional, Union, Set, Tuple
 from datetime import datetime
 from urllib.parse import quote
 
@@ -35,14 +35,14 @@ _high_school_weights = (
 )
 
 
+# converts to sorted set
 def _convert_ts(ts):
-    # converts to sorted set
     return set(sorted(ts))
 
 
 @attr.s(frozen=True, slots=True, order=True, eq=True, kw_only=True, auto_attribs=True)
 class Match(object):
-    match_id: str = attr.ib(validator=instance_of(str), repr=False, order=False)
+    id_: str = attr.ib(validator=instance_of(str), repr=False, order=False)
     # enter at your own risk
     base_url: Optional[Union[str, None]] = attr.ib(
         default=None, repr=False, order=False
@@ -50,15 +50,17 @@ class Match(object):
     event: Event = attr.ib(
         validator=instance_of(Event), repr=lambda x: x.name, order=False
     )
-    match_date: datetime = attr.ib(validator=instance_of(datetime), order=True)
-    result: Result = attr.ib(validator=instance_of(Result), order=False)
-    overtime: bool = attr.ib(validator=instance_of(bool), order=False)
+    date_: datetime = attr.ib(validator=instance_of(datetime), order=True,
+                              repr=False)
+    result: Result = attr.ib(validator=instance_of(Result), order=False, repr=lambda
+        x: x.text)
+    overtime: bool = attr.ib(validator=instance_of(bool), order=False, repr=False)
 
-    @match_id.validator
-    def _check_match_id(self, attrib, val):
-        if len(val) < 20 or len(val) > 50:
+    @id_.validator
+    def _check_id_(self, attrib, val):
+        if len(val) < 50 or len(val) > 120:
             raise ValueError(
-                f"Expected str `match_id` with 20 <= len <= 50, " f'got "{val}"'
+                f"Expected str `id_` with 50 <= len <= 120, " f'got "{val}"'
             )
 
     @overtime.validator
@@ -69,7 +71,7 @@ class Match(object):
 
     @property
     def video_url(self):
-        return f"{self.base_url}/{quote(self.match_id)}" if self.base_url else None
+        return f"{self.base_url}/{quote(self.id_)}" if self.base_url else None
 
     @property
     def focus_pts(self):
@@ -86,7 +88,12 @@ class Match(object):
     @property
     def td_diff(self):
         # default 0 if attribute not found
-        return getattr(self, "fT2", 0) - getattr(self, "oT2", 0)
+        ft2 = getattr(self, "fT2", 0)
+        ot2 = getattr(self, "oT2", 0)
+        if ft2 == 0 and ot2 == 0:
+            return None
+        else:
+            return ft2 - ot2
 
     # 'f' or 'o' filter
     def _calculate_pts(self, athlete_filter):
@@ -101,15 +108,18 @@ class Match(object):
 
 @attr.s(frozen=True, slots=True, order=True, eq=True, kw_only=True, auto_attribs=True)
 class CollegeMatch(Match):
-    focus: Wrestler = attr.ib(validator=instance_of(Wrestler), order=False)
-    opponent: Wrestler = attr.ib(validator=instance_of(Wrestler), order=False)
+    focus: Wrestler = attr.ib(validator=instance_of(Wrestler), order=False,
+                              repr=lambda x: x.name)
+    opponent: Wrestler = attr.ib(validator=instance_of(Wrestler), order=False,
+                                 repr=lambda x: x.name)
     weight_class: int = attr.ib(
-        validator=[instance_of(int), in_(_college_weights)], order=False
+        validator=[instance_of(int), in_(_college_weights)], order=False, repr=True
     )
     # auto sorts (based on time)
-    time_series: Set[CollegeScoring] = attr.ib(
-        converter=_convert_ts, validator=instance_of(Set), order=False
-    )
+    time_series: Tuple[CollegeScoring] = attr.ib(validator=instance_of(Tuple),
+                                                 order=False,
+                                                 repr=lambda x: f"{len(x)}-matches"
+                                                 )
 
     @time_series.validator
     def _check_time_series(self, attrib, val):
@@ -124,13 +134,15 @@ class CollegeMatch(Match):
 
 @attr.s(frozen=True, slots=True, order=True, eq=True, kw_only=True, auto_attribs=True)
 class HighSchoolMatch(Match):
-    focus: Wrestler = attr.ib(validator=instance_of(Wrestler), order=False)
-    opponent: Wrestler = attr.ib(validator=instance_of(Wrestler), order=False)
+    focus: Wrestler = attr.ib(validator=instance_of(Wrestler), order=False,
+                              repr=lambda x: x.name)
+    opponent: Wrestler = attr.ib(validator=instance_of(Wrestler), order=False,
+                                 repr=lambda x: x.name)
     weight_class: int = attr.ib(
         validator=[instance_of(int), in_(_high_school_weights)], order=False
     )
-    time_series: Set[HighSchoolScoring] = attr.ib(
-        validator=instance_of(Set), order=False
+    time_series: Tuple[HighSchoolScoring] = attr.ib(
+        validator=instance_of(Tuple), order=False, repr=lambda x: f"{len(x)} actions"
     )
 
     @time_series.validator
