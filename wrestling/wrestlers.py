@@ -13,19 +13,20 @@ from wrestling.enumerations import Year
 #  THIS IS AWESOME AND MEANS ONE DYNAMIC WRESTLER CLASS CAN ACCOMPLISH EVERYTHING!
 
 
-def convert_to_title(x: str):
+def _convert_to_title(x: str):
     return x.title().strip()
 
 
 @attr.s(kw_only=True, auto_attribs=True, order=True, slots=True, frozen=True)
 class Wrestler(object):
-    name: str = attr.ib(converter=convert_to_title, validator=instance_of(str),
-                        order=True)
-    team: str = attr.ib(converter=convert_to_title, validator=instance_of(str),
-                        order=False)
+    name: str = attr.ib(
+        converter=_convert_to_title, validator=instance_of(str), order=True
+    )
+    team: str = attr.ib(
+        converter=_convert_to_title, validator=instance_of(str), order=False
+    )
     eligibility: Optional[Year] = attr.ib(
-        validator=[instance_of(Year)],
-        default=Year.FR, order=False
+        validator=[instance_of(Year)], default=Year.FR, order=False
     )
 
     @name.validator
