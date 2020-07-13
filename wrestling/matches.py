@@ -88,12 +88,7 @@ class Match(object):
     @property
     def td_diff(self):
         # default 0 if attribute not found
-        ft2 = getattr(self, "fT2", 0)
-        ot2 = getattr(self, "oT2", 0)
-        if ft2 == 0 and ot2 == 0:
-            return None
-        else:
-            return ft2 - ot2
+        return getattr(self, "fT2", 0) - getattr(self, "oT2", 0)
 
     # 'f' or 'o' filter
     def _calculate_pts(self, athlete_filter):
