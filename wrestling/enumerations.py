@@ -2,15 +2,17 @@ import aenum
 import enum
 
 
+# todo: values should be updated to reflect API diffs or HS/College diffs
+
 # result section
 @enum.unique
 class Result(enum.IntEnum):
-    WIN_DECISION = 1
-    WIN_MAJOR = 2
-    WIN_TECH = 3
-    WIN_FALL = 4
-    LOSS_DECISION = -1
-    LOSS_MAJOR = -2
+	WIN_DECISION = 1
+	WIN_MAJOR = 2
+	WIN_TECH = 3
+	WIN_FALL = 4
+	LOSS_DECISION = -1
+	LOSS_MAJOR = -2
     LOSS_TECH = -3
     LOSS_FALL = -4
 
@@ -45,7 +47,6 @@ class Result(enum.IntEnum):
             return 0
 
 
-# todo: values should be updated to reflect API diffs or HS/College diffs
 # eligibility section
 @enum.unique
 class Year(enum.Enum):

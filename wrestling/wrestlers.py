@@ -7,36 +7,27 @@ from attr.validators import instance_of
 from wrestling.enumerations import Year
 
 
-# todo: add method for calculating all the athlete metrics! (should be in
-#  college / hs --> reason for subclasses)
-# should those metrics be abstract properties in the base class??
+# todo: add method for calculating all the athlete metrics!
+#  (should be in college / hs --> reason for subclasses) --> NO BECAUSE THOSE
+#  MATCHES/SCORING EVENTS ALREADY CONTAIN EXCLUSIVELY THE CORRECT EVENT LABELS -->
+#  THIS IS AWESOME AND MEANS ONE DYNAMIC WRESTLER CLASS CAN ACCOMPLISH EVERYTHING!
 
 
-@attr.s(kw_only=True, auto_attribs=True)
+def convert_to_title(x: str):
+    return x.title().strip()
+
+
+@attr.s(kw_only=True, auto_attribs=True, order=True, slots=True, frozen=True)
 class Wrestler(object):
-    # todo: add validation for name formatting
-    name: str = attr.ib(validator=instance_of(str))
-    team: str = attr.ib(validator=instance_of(str))
+    name: str = attr.ib(converter=convert_to_title, validator=instance_of(str),
+                        order=True)
+    team: str = attr.ib(converter=convert_to_title, validator=instance_of(str),
+                        order=False)
     eligibility: Optional[Year] = attr.ib(
         validator=[instance_of(Year)],
-        default=Year.FR
+        default=Year.FR, order=False
     )
 
-
-@attr.s(kw_only=True, auto_attribs=True)
-class CollegeWrestler(Wrestler):
-    pass
-
-
-@attr.s(kw_only=True, auto_attribs=True)
-class HighSchoolWrestler(Wrestler):
-    pass
-
-# w1 = Wrestler(name="Nick Anthony", team='bluejays')
-# print(w1)
-# w2 = CollegeWrestler(name="Nick Anthony", team='bluejays', eligibility=Year.SR)
-# w3 = HighSchoolWrestler(name="Nick Anthony", team='bluejays', eligibility=Year.SR)
-# w4 = HighSchoolWrestler(name="Nick Anthony", team='bluejays', eligibility=Year.SR)
-# print(w2 == w4)
-
-# print(attr.asdict(w1))
+    @name.validator
+    def _check_name(self, attrib, val):
+        assert ", " in val, f"Names should be formatted as `Last, First`, got {val}."
