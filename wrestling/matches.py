@@ -57,7 +57,8 @@ class Match(object):
                               repr=False)
     result: Result = attr.ib(validator=instance_of(Result), order=False, repr=lambda
         x: x.text)
-    overtime: bool = attr.ib(validator=instance_of(bool), order=False, repr=False)
+    overtime: Optional[bool] = attr.ib(validator=instance_of(bool), order=False,
+                                       repr=False, default=False)
 
     @id_.validator
     def _check_id_(self, attrib, val):
@@ -108,27 +109,6 @@ class Match(object):
     # custom settings for TS bc we need to insert the names and the event name for
     # analyses later
     def todict(self, time_series_only: Optional[bool] = False):
-        d = dict(
-            focus_name=getattr(self, 'focus').name,
-            focus_team=getattr(self, 'focus').team,
-            opp_name=getattr(self, 'opponent').name,
-            opp_team=getattr(self, 'opponent').team,
-            weight=getattr(self, 'weight_class'),
-            event_name=getattr(self, 'event').name,
-            event_type=getattr(self, 'opponent').type_,
-            date=datetime.strftime(getattr(self, 'date_'), "%Y-%m-%d %H:%M:%S"),
-            result=getattr(self, 'result').text,
-            overtime=getattr(self, 'overtime'),
-            video=getattr(self, 'video_url'),
-            win=getattr(self, 'result').win,
-            bonuns=getattr(self, 'result').bonus,
-            pin=getattr(self, 'result').pin,
-            team_pts=getattr(self, 'result').team_points,
-            focus_pts=getattr(self, 'focus_pts'),
-            opp_pts=getattr(self, 'opp_pts'),
-            mov=getattr(self, 'mov'),
-            td_diff=getattr(self, 'td_diff'),
-        )
         if time_series_only:
             ts = tuple(
                 dict(
@@ -139,6 +119,29 @@ class Match(object):
                 ) for x in getattr(self, 'time_series')
             )
             return ts
+        else:
+            return dict(
+                focus_name=getattr(self, 'focus').name,
+                focus_team=getattr(self, 'focus').team,
+                opp_name=getattr(self, 'opponent').name,
+                opp_team=getattr(self, 'opponent').team,
+                weight=getattr(self, 'weight_class'),
+                event_name=getattr(self, 'event').name,
+                event_type=getattr(self, 'event').type_,
+                date=datetime.strftime(getattr(self, 'date_'), "%Y-%m-%d %H:%M:%S"),
+                text_result=getattr(self, 'result').text,
+                num_result=getattr(self, 'result').value,
+                overtime=getattr(self, 'overtime'),
+                video=getattr(self, 'video_url'),
+                win=getattr(self, 'result').win,
+                bonuns=getattr(self, 'result').bonus,
+                pin=getattr(self, 'result').pin,
+                team_pts=getattr(self, 'result').team_points,
+                focus_pts=getattr(self, 'focus_pts'),
+                opp_pts=getattr(self, 'opp_pts'),
+                mov=getattr(self, 'mov'),
+                td_diff=getattr(self, 'td_diff'),
+            )
 
 
 @attr.s(frozen=True, slots=True, order=True, eq=True, kw_only=True, auto_attribs=True)
