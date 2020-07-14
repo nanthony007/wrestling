@@ -16,28 +16,29 @@ from wrestling.events import Event
 from wrestling.scoring import CollegeScoring, HighSchoolScoring
 from wrestling.wrestlers import Wrestler
 
-_college_weights = (125, 133, 141, 149, 157, 165, 174, 184, 197, 285)
+_college_weights = (
+'125', '133', '141', '149', '157', '165', '174', '184', '197', '285')
 _high_school_weights = (
-    106,
-    113,
-    120,
-    126,
-    132,
-    138,
-    145,
-    152,
-    160,
-    170,
-    182,
-    195,
-    220,
-    285,
+    '106',
+    '113',
+    '120',
+    '126',
+    '132',
+    '138',
+    '145',
+    '152',
+    '160',
+    '170',
+    '182',
+    '195',
+    '220',
+    '285',
 )
 
 
 # converts to sorted set
 def _convert_ts(ts):
-    return set(sorted(ts))
+    return tuple(sorted(ts))
 
 
 @attr.s(frozen=True, slots=True, order=True, eq=True, kw_only=True, auto_attribs=True)
@@ -67,7 +68,9 @@ class Match(object):
     def _check_overtime(self, attrib, val):
         # cannot tech in overtime
         if self.result == Result.WIN_TECH or self.result == Result.LOSS_TECH:
-            assert val is False
+            if val:  # if overtime is True
+                raise ValueError(f"Overtime must be false if match resulted in Tech "
+                                 f"Fall.")
 
     @property
     def video_url(self):
@@ -107,24 +110,28 @@ class CollegeMatch(Match):
                               repr=lambda x: x.name)
     opponent: Wrestler = attr.ib(validator=instance_of(Wrestler), order=False,
                                  repr=lambda x: x.name)
-    weight_class: int = attr.ib(
-        validator=[instance_of(int), in_(_college_weights)], order=False, repr=True
-    )
+    weight_class: Union[int, str] = attr.ib(order=False, repr=True)
     # auto sorts (based on time)
     time_series: Tuple[CollegeScoring] = attr.ib(validator=instance_of(Tuple),
                                                  order=False,
-                                                 repr=lambda x: f"{len(x)}-matches"
+                                                 repr=lambda x: f"{len(x)}events"
                                                  )
+
+    @weight_class.validator
+    def _check_weight_class(self, attrib, val):
+        if not isinstance(val, str) and not isinstance(val, int):
+            raise TypeError(f"Expected int or str, got {val!r} with type {type(val)}.")
+        if val not in _college_weights:
+            raise ValueError(f"Expected on of: {_college_weights!r}, but got {val!r}.")
 
     @time_series.validator
     def _check_time_series(self, attrib, val):
-        assert all(isinstance(event, CollegeScoring) for event in val), (
-            "All of the items in the `time_series` set must be "
-            "`CollegeScoring` objects."
-        )
-        assert isvalid_sequence("college", tuple(val)) is True, (
-            f"Time series sequence appears " f"invalid..."
-        )
+
+        if not all(isinstance(event, CollegeScoring) for event in val):
+            raise TypeError(f"All of the items in the `time_series` set must be "
+                            f"`CollegeScoring` objects.")
+        if not isvalid_sequence("college", val):
+            raise ValueError(f"Time series sequence appears invalid...")
 
 
 @attr.s(frozen=True, slots=True, order=True, eq=True, kw_only=True, auto_attribs=True)
@@ -142,10 +149,8 @@ class HighSchoolMatch(Match):
 
     @time_series.validator
     def _check_time_series(self, attrib, val):
-        assert all(isinstance(event, HighSchoolScoring) for event in val), (
-            "All of the items in the `time_series` set must be "
-            "`HighSchoolScoring` objects."
-        )
-        assert isvalid_sequence("college", tuple(val)) is True, (
-            f"Time series sequence appears " f"invalid..."
-        )
+        if not all(isinstance(event, HighSchoolScoring) for event in val):
+            raise TypeError(f"All of the items in the `time_series` set must be "
+                            f"`HighSchoolScoring` objects.")
+        if not isvalid_sequence("college", val):
+            raise ValueError(f"Time series sequence appears invalid...")

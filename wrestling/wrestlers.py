@@ -31,4 +31,5 @@ class Wrestler(object):
 
     @name.validator
     def _check_name(self, attrib, val):
-        assert ", " in val, f"Names should be formatted as `Last, First`, got {val}."
+        if ", " not in val:
+            raise ValueError(f"Names should be formatted as `Last, First`, got {val}.")
