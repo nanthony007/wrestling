@@ -60,6 +60,8 @@ class CollegeScoring(ScoringEvent):
 
     @property
     def formatted_label(self):
+        if self.label.name == 'START':
+            return 'START'
         if self.focus_color == self.initiator:
             return f"f{self.label.name}"
         elif self.focus_color != self.initiator:
@@ -104,6 +106,8 @@ class HighSchoolScoring(ScoringEvent):
 
     @property
     def formatted_label(self):
+        if self.label.name == 'START':
+            return 'START'
         if self.focus_color == self.initiator:
             return f"f{self.label.name}"
         elif self.focus_color != self.initiator:
