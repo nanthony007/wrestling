@@ -5,7 +5,7 @@ margin = dict(l=0, r=0, b=0, t=0, pad=0)
 
 
 def draw_match_timeseries(ts_dict):
-    tdf = pd.DataFrame(ts_dict)
+    tdf = pd.DataFrame.from_records(ts_dict)
     df = pd.melt(
         tdf,
         id_vars=["time", "str_label"],
@@ -43,7 +43,7 @@ def draw_match_timeseries(ts_dict):
 
 
 def draw_results_sunburst(match_dicts):
-    df = pd.DataFrame(match_dicts)
+    df = pd.DataFrame.from_records(match_dicts)
     df['method'] = df.text_result.apply(lambda x: x.split()[1])
     df['result'] = df.text_result.apply(lambda x: x.split()[0])
     return px.sunburst(
@@ -56,7 +56,7 @@ def draw_results_sunburst(match_dicts):
 
 def draw_points_sunburst(ts_dicts):
     ts_dicts.pop(0)  # drops START
-    df = pd.DataFrame(ts_dicts)
+    df = pd.DataFrame.from_records(ts_dicts)
     return px.sunburst(
         df,
         path=["period", "str_label"]
@@ -67,7 +67,7 @@ def draw_points_sunburst(ts_dicts):
 
 
 def draw_results_timeseries(match_dicts):
-    df = pd.DataFrame(match_dicts)
+    df = pd.DataFrame.from_records(match_dicts)
     return px.scatter(
         df,
         x='date',
@@ -101,7 +101,7 @@ def draw_results_timeseries(match_dicts):
 # needs work!
 def draw_points_hist(ts_dicts, points_toggle):
     ts_dicts.pop(0)  # drops START
-    df = pd.DataFrame(ts_dicts)
+    df = pd.DataFrame.from_records(ts_dicts)
     return px.bar(
         df,
         x="move",

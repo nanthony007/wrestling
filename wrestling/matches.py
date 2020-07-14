@@ -108,7 +108,7 @@ class Match(object):
 
     # custom settings for TS bc we need to insert the names and the event name for
     # analyses later
-    def todict(self, time_series_only: Optional[bool] = False):
+    def to_dict(self, time_series_only: Optional[bool] = False):
         if time_series_only:
             ts = tuple(
                 dict(

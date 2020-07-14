@@ -30,7 +30,7 @@ class Event(object):
                 f"Expected str `id_` with 20 <= len <= 50, " f'got "{val}"'
             )
 
-    def todict(self):
+    def to_dict(self):
         return dict(
             name=self.name,
             type=self.type_,

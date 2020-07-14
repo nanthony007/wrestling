@@ -34,7 +34,7 @@ class ScoringEvent(object):
         return time.strftime(self.time_stamp, "%M:%S")
 
     @abc.abstractmethod
-    def todict(self):
+    def to_dict(self):
         pass
 
 
@@ -74,7 +74,7 @@ class CollegeScoring(ScoringEvent):
                 f"{self.initiator}."
             )
 
-    def todict(self):
+    def to_dict(self):
         return dict(
             time=self.formatted_time,
             period=self.period,
@@ -121,7 +121,7 @@ class HighSchoolScoring(ScoringEvent):
                 f"{self.initiator}."
             )
 
-    def todict(self):
+    def to_dict(self):
         return dict(
             time=self.formatted_time,
             period=self.period,

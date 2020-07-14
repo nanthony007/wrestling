@@ -34,7 +34,7 @@ class Wrestler(object):
         if ", " not in val:
             raise ValueError(f"Names should be formatted as `Last, First`, got {val}.")
 
-    def todict(self):
+    def to_dict(self):
         return dict(
             name=self.name,
             team=self.team,
