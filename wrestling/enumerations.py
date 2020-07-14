@@ -58,6 +58,7 @@ class Year(enum.Enum):
 
 # labels section
 class CollegeLabel(aenum.IntEnum, settings=aenum.NoAlias):
+    START = 0
     # points section
     T2 = 2
     N2 = 2
@@ -80,6 +81,7 @@ class CollegeLabel(aenum.IntEnum, settings=aenum.NoAlias):
 
 
 class HighSchoolLabel(aenum.IntEnum, settings=aenum.NoAlias):
+    START = 0
     # points section
     T2 = 2
     N2 = 2
