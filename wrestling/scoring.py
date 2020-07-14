@@ -78,7 +78,8 @@ class CollegeScoring(ScoringEvent):
         return dict(
             time=self.formatted_time,
             period=self.period,
-            label=self.formatted_label,
+            str_label=self.formatted_label,
+            label=self.label
         )
 
 
@@ -124,5 +125,6 @@ class HighSchoolScoring(ScoringEvent):
         return dict(
             time=self.formatted_time,
             period=self.period,
-            label=self.formatted_label,
+            str_label=self.formatted_label,
+            label=self.label
         )
