@@ -100,14 +100,45 @@ class Match(object):
         return sum(
             (
                 event.label.value
-                for event in self.time_series
+                for event in getattr(self, 'time_series')
                 if event.formatted_label.startswith(athlete_filter)
             )
         )
 
-    @abc.abstractmethod
-    def todict(self):
-        pass
+    # custom settings for TS bc we need to insert the names and the event name for
+    # analyses later
+    def todict(self, time_series_only: Optional[bool] = False):
+        d = dict(
+            focus_name=getattr(self, 'focus').name,
+            focus_team=getattr(self, 'focus').team,
+            opp_name=getattr(self, 'opponent').name,
+            opp_team=getattr(self, 'opponent').team,
+            weight=getattr(self, 'weight_class'),
+            event_name=getattr(self, 'event').name,
+            event_type=getattr(self, 'opponent').type_,
+            date=datetime.strftime(getattr(self, 'date_'), "%Y-%m-%d %H:%M:%S"),
+            result=getattr(self, 'result').text,
+            overtime=getattr(self, 'overtime'),
+            video=getattr(self, 'video_url'),
+            win=getattr(self, 'result').win,
+            bonuns=getattr(self, 'result').bonus,
+            pin=getattr(self, 'result').pin,
+            team_pts=getattr(self, 'result').team_points,
+            focus_pts=getattr(self, 'focus_pts'),
+            opp_pts=getattr(self, 'opp_pts'),
+            mov=getattr(self, 'mov'),
+            td_diff=getattr(self, 'td_diff'),
+        )
+        if time_series_only:
+            ts = tuple(
+                dict(
+                    x.todict(), **dict(
+                        focus_name=getattr(self, 'focus').name,
+                        opp_name=getattr(self, 'opponent').name,
+                        event_name=getattr(self, 'event').name)
+                ) for x in getattr(self, 'time_series')
+            )
+            return ts
 
 
 @attr.s(frozen=True, slots=True, order=True, eq=True, kw_only=True, auto_attribs=True)
@@ -139,33 +170,6 @@ class CollegeMatch(Match):
         if not isvalid_sequence("college", val):
             raise ValueError(f"Time series sequence appears invalid...")
 
-    def todict(self):
-        return dict(
-            focus=self.focus.name,
-            focus_team=self.focus.team,
-            opponent=self.opponent.name,
-            opp_team=self.opponent.team,
-            weight=self.weight_class,
-            event_name=self.event.name,
-            event_type=self.event.type_,
-            date=datetime.strptime(self.date_, "%Y-%m-%d %H:%M:%S"),
-            result=self.result.text,
-            overtime=self.overtime,
-            video=self.video_url,
-            ts=[
-                x.todict() for x in self.time_series
-            ],
-            # can skip these?  --> how else to get these values?
-            win=self.result.win,
-            bonuns=self.result.bonus,
-            pin=self.result.pin,
-            team_pts=self.result.team_points,
-            focus_pts=self.focus_pts,
-            opp_pts=self.opp_pts,
-            mov=self.mov,
-            td_diff=self.td_diff,
-        )
-
 
 @attr.s(frozen=True, slots=True, order=True, eq=True, kw_only=True, auto_attribs=True)
 class HighSchoolMatch(Match):
@@ -187,30 +191,3 @@ class HighSchoolMatch(Match):
                             f"`HighSchoolScoring` objects.")
         if not isvalid_sequence("college", val):
             raise ValueError(f"Time series sequence appears invalid...")
-
-    def todict(self):
-        return dict(
-            focus=self.focus.name,
-            focus_team=self.focus.team,
-            opponent=self.opponent.name,
-            opp_team=self.opponent.team,
-            weight=self.weight_class,
-            event_name=self.event.name,
-            event_type=self.event.type_,
-            date=datetime.strptime(self.date_, "%Y-%m-%d %H:%M:%S"),
-            result=self.result.text,
-            overtime=self.overtime,
-            video=self.video_url,
-            ts=[
-                x.todict() for x in self.time_series
-            ],
-            # can skip these?  --> how else to get these values?
-            win=self.result.win,
-            bonuns=self.result.bonus,
-            pin=self.result.pin,
-            team_pts=self.result.team_points,
-            focus_pts=self.focus_pts,
-            opp_pts=self.opp_pts,
-            mov=self.mov,
-            td_diff=self.td_diff,
-        )
