@@ -6,7 +6,10 @@ from attr.validators import in_, instance_of
 
 from datetime import time
 
+import abc
+
 from wrestling.enumerations import CollegeLabel, HighSchoolLabel
+
 
 # todo: add subclass for custom actions (which takes custom Labels Enum)
 
@@ -29,6 +32,10 @@ class ScoringEvent(object):
     @property
     def formatted_time(self):
         return time.strftime(self.time_stamp, "%M:%S")
+
+    @abc.abstractmethod
+    def todict(self):
+        pass
 
 
 @attr.s(frozen=True, slots=True, eq=True, order=True, auto_attribs=True, kw_only=True)
@@ -64,6 +71,13 @@ class CollegeScoring(ScoringEvent):
                 f"`initiator`, got {self.focus_color} and "
                 f"{self.initiator}."
             )
+
+    def todict(self):
+        return dict(
+            time=self.formatted_time,
+            period=self.period,
+            label=self.formatted_label,
+        )
 
 
 @attr.s(frozen=True, slots=True, eq=True, order=True, auto_attribs=True, kw_only=True)
@@ -101,3 +115,10 @@ class HighSchoolScoring(ScoringEvent):
                 f"`initiator`, got {self.focus_color} and "
                 f"{self.initiator}."
             )
+
+    def todict(self):
+        return dict(
+            time=self.formatted_time,
+            period=self.period,
+            label=self.formatted_label,
+        )

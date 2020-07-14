@@ -29,3 +29,9 @@ class Event(object):
             raise ValueError(
                 f"Expected str `id_` with 20 <= len <= 50, " f'got "{val}"'
             )
+
+    def todict(self):
+        return dict(
+            name=self.name,
+            type=self.type_,
+        )

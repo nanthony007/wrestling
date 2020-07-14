@@ -34,14 +34,14 @@ _hs_focus_top = ["fN2", "fN3", "oE1", "oR2"]
 _hs_focus_bottom = ["oN2", "oN3", "fE1", "fR2"]
 _hs_neutral = ["fT2", "oT2"]
 
-college_sequences = dict(
+COLLEGE_SEQUENCES = dict(
     neutral=set(_college_neutral + always),
     top=set(_college_focus_top + always),
     bottom=set(_college_focus_bottom + always),
     always=set(always),
 )
 
-hs_sequences = dict(
+HS_SEQUENCES = dict(
     neutral=set(_hs_neutral + always),
     top=set(_hs_focus_top + always),
     bottom=set(_hs_focus_bottom + always),
@@ -59,7 +59,7 @@ def isvalid_sequence(level: str, time_series: Tuple):
             f"got {level!r}."
         )
     # aliases sequences based on level
-    sequences = college_sequences if level == "college" else hs_sequences
+    sequences = COLLEGE_SEQUENCES if level == "college" else HS_SEQUENCES
     position = "neutral"
     # skips iteration the last value because we check the next
     for i, score in enumerate(time_series[:-1]):

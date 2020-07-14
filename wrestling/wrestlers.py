@@ -25,7 +25,7 @@ class Wrestler(object):
     team: str = attr.ib(
         converter=_convert_to_title, validator=instance_of(str), order=False
     )
-    eligibility: Optional[Year] = attr.ib(
+    year: Optional[Year] = attr.ib(
         validator=[instance_of(Year)], default=Year.FR, order=False
     )
 
@@ -33,3 +33,10 @@ class Wrestler(object):
     def _check_name(self, attrib, val):
         if ", " not in val:
             raise ValueError(f"Names should be formatted as `Last, First`, got {val}.")
+
+    def todict(self):
+        return dict(
+            name=self.name,
+            team=self.team,
+            year=self.year.value
+        )

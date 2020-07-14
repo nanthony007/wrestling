@@ -6,6 +6,8 @@
 import attr
 from attr.validators import instance_of, in_
 
+import abc
+
 from typing import Optional, Union, Set, Tuple
 from datetime import datetime
 from urllib.parse import quote
@@ -103,6 +105,10 @@ class Match(object):
             )
         )
 
+    @abc.abstractmethod
+    def todict(self):
+        pass
+
 
 @attr.s(frozen=True, slots=True, order=True, eq=True, kw_only=True, auto_attribs=True)
 class CollegeMatch(Match):
@@ -133,6 +139,33 @@ class CollegeMatch(Match):
         if not isvalid_sequence("college", val):
             raise ValueError(f"Time series sequence appears invalid...")
 
+    def todict(self):
+        return dict(
+            focus=self.focus.name,
+            focus_team=self.focus.team,
+            opponent=self.opponent.name,
+            opp_team=self.opponent.team,
+            weight=self.weight_class,
+            event_name=self.event.name,
+            event_type=self.event.type_,
+            date=datetime.strptime(self.date_, "%Y-%m-%d %H:%M:%S"),
+            result=self.result.text,
+            overtime=self.overtime,
+            video=self.video_url,
+            ts=[
+                x.todict() for x in self.time_series
+            ],
+            # can skip these?  --> how else to get these values?
+            win=self.result.win,
+            bonuns=self.result.bonus,
+            pin=self.result.pin,
+            team_pts=self.result.team_points,
+            focus_pts=self.focus_pts,
+            opp_pts=self.opp_pts,
+            mov=self.mov,
+            td_diff=self.td_diff,
+        )
+
 
 @attr.s(frozen=True, slots=True, order=True, eq=True, kw_only=True, auto_attribs=True)
 class HighSchoolMatch(Match):
@@ -154,3 +187,30 @@ class HighSchoolMatch(Match):
                             f"`HighSchoolScoring` objects.")
         if not isvalid_sequence("college", val):
             raise ValueError(f"Time series sequence appears invalid...")
+
+    def todict(self):
+        return dict(
+            focus=self.focus.name,
+            focus_team=self.focus.team,
+            opponent=self.opponent.name,
+            opp_team=self.opponent.team,
+            weight=self.weight_class,
+            event_name=self.event.name,
+            event_type=self.event.type_,
+            date=datetime.strptime(self.date_, "%Y-%m-%d %H:%M:%S"),
+            result=self.result.text,
+            overtime=self.overtime,
+            video=self.video_url,
+            ts=[
+                x.todict() for x in self.time_series
+            ],
+            # can skip these?  --> how else to get these values?
+            win=self.result.win,
+            bonuns=self.result.bonus,
+            pin=self.result.pin,
+            team_pts=self.result.team_points,
+            focus_pts=self.focus_pts,
+            opp_pts=self.opp_pts,
+            mov=self.mov,
+            td_diff=self.td_diff,
+        )
