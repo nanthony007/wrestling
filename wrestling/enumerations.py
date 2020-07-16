@@ -5,7 +5,6 @@ import enum
 # todo: values should be updated to reflect API diffs or HS/College diffs
 
 # result section
-@enum.unique
 class Result(enum.IntEnum):
     WIN_DECISION = 1
     WIN_MAJOR = 2
@@ -15,6 +14,7 @@ class Result(enum.IntEnum):
     LOSS_MAJOR = -2
     LOSS_TECH = -3
     LOSS_FALL = -4
+    NO_CONTEST = 0  # ask tyler about NC
 
     @property
     def text(self):
@@ -54,6 +54,10 @@ class Year(enum.Enum):
     SO = "Sophomore"
     JR = "Junior"
     SR = "Senior"
+    RS_FR = "Redshirt Freshman"
+    RS_SO = "Redshirt Sophomore"
+    RS_JR = "Redshirt Junior"
+    RS_SR = "Redshirt Senior"
 
 
 # labels section
