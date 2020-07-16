@@ -112,7 +112,7 @@ class Match(object):
         if time_series_only:
             ts = tuple(
                 dict(
-                    x.todict(), **dict(
+                    x.to_dict(), **dict(
                         focus_name=getattr(self, 'focus').name,
                         opp_name=getattr(self, 'opponent').name,
                         event_name=getattr(self, 'event').name)
@@ -151,6 +151,8 @@ class CollegeMatch(Match):
     opponent: Wrestler = attr.ib(validator=instance_of(Wrestler), order=False,
                                  repr=lambda x: x.name)
     weight_class: Union[int, str] = attr.ib(order=False, repr=True)
+    # seconds
+    duration: Optional[int] = attr.ib(default=420, validator=instance_of(int))
     # auto sorts (based on time)
     time_series: Tuple[CollegeScoring] = attr.ib(validator=instance_of(Tuple),
                                                  order=False,
@@ -183,6 +185,8 @@ class HighSchoolMatch(Match):
     weight_class: int = attr.ib(
         validator=[instance_of(int), in_(_high_school_weights)], order=False
     )
+    # seconds
+    duration: Optional[int] = attr.ib(default=360, validator=instance_of(int))
     time_series: Tuple[HighSchoolScoring] = attr.ib(
         validator=instance_of(Tuple), order=False, repr=lambda x: f"{len(x)} actions"
     )
