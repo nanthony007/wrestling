@@ -19,7 +19,8 @@ from wrestling.scoring import CollegeScoring, HighSchoolScoring
 from wrestling.wrestlers import Wrestler
 
 _college_weights = (
-'125', '133', '141', '149', '157', '165', '174', '184', '197', '285')
+    '125', '133', '141', '149', '157', '165', '174', '184', '197', '285'
+)
 _high_school_weights = (
     '106',
     '113',

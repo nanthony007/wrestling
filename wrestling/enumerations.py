@@ -2,8 +2,6 @@ import aenum
 import enum
 
 
-# todo: values should be updated to reflect API diffs or HS/College diffs
-
 # result section
 class Result(enum.IntEnum):
     WIN_DECISION = 1
@@ -14,6 +12,7 @@ class Result(enum.IntEnum):
     LOSS_MAJOR = -2
     LOSS_TECH = -3
     LOSS_FALL = -4
+    # anytime the match didn't fully end (disq, default, forfeit, inj, etc)
     NO_CONTEST = 0  # ask tyler about NC
 
     @property
@@ -62,7 +61,6 @@ class Year(enum.Enum):
 
 # labels section
 class CollegeLabel(aenum.IntEnum, settings=aenum.NoAlias):
-    START = 0
     # points section
     T2 = 2
     N2 = 2
@@ -85,7 +83,6 @@ class CollegeLabel(aenum.IntEnum, settings=aenum.NoAlias):
 
 
 class HighSchoolLabel(aenum.IntEnum, settings=aenum.NoAlias):
-    START = 0
     # points section
     T2 = 2
     N2 = 2

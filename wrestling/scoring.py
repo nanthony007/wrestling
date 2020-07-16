@@ -11,7 +11,7 @@ import abc
 from wrestling.enumerations import CollegeLabel, HighSchoolLabel
 
 
-# todo: add subclass for custom actions (which takes custom Labels Enum)
+# todo: find a way to validate period based on timestamp.
 
 
 @attr.s(frozen=True, slots=True, eq=True, order=True, auto_attribs=True, kw_only=True)
@@ -24,6 +24,11 @@ class _ScoringEvent(object):
         validator=[instance_of(str), in_(("red", "green"))], order=False, repr=False
     )
     period: int = attr.ib(validator=instance_of(int), order=False, repr=False)
+
+    @property
+    @abc.abstractmethod
+    def label(self):
+        pass
 
     @period.validator
     def _check_period(self, attrib, val):
