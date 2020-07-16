@@ -15,7 +15,7 @@ from wrestling.enumerations import CollegeLabel, HighSchoolLabel
 
 
 @attr.s(frozen=True, slots=True, eq=True, order=True, auto_attribs=True, kw_only=True)
-class ScoringEvent(object):
+class _ScoringEvent(object):
     time_stamp: time = attr.ib(validator=instance_of(time), order=True)
     initiator: str = attr.ib(
         validator=[instance_of(str), in_(("red", "green"))], order=False,
@@ -23,6 +23,12 @@ class ScoringEvent(object):
     focus_color: str = attr.ib(
         validator=[instance_of(str), in_(("red", "green"))], order=False, repr=False
     )
+    period: int = attr.ib(validator=instance_of(int), order=False, repr=False)
+
+    @period.validator
+    def _check_period(self, attrib, val):
+        if val >= 5 or val < 1:
+            raise ValueError(f"Expected period between 1-4, got {val!r}.")
 
     @time_stamp.validator
     def _check_time_stamp(self, _, val):
@@ -33,31 +39,6 @@ class ScoringEvent(object):
     def formatted_time(self):
         return time.strftime(self.time_stamp, "%M:%S")
 
-    @abc.abstractmethod
-    def to_dict(self):
-        pass
-
-
-@attr.s(frozen=True, slots=True, eq=True, order=True, auto_attribs=True, kw_only=True)
-class CollegeScoring(ScoringEvent):
-    label: CollegeLabel = attr.ib(validator=instance_of(CollegeLabel), order=False)
-
-    @property
-    def period(self):
-        if 0 <= self.time_stamp.minute < 3:
-            return 1
-        elif 3 <= self.time_stamp.minute < 5:
-            return 2
-        elif 5 <= self.time_stamp.minute < 7:
-            return 3
-        elif self.time_stamp.minute >= 7:
-            return 4
-        else:
-            raise ValueError(
-                f"Unexpected time value: {self.time_stamp}, "
-                f"could not determine `period`."
-            )
-
     @property
     def formatted_label(self):
         if self.label.name == 'START':
@@ -84,47 +65,12 @@ class CollegeScoring(ScoringEvent):
 
 
 @attr.s(frozen=True, slots=True, eq=True, order=True, auto_attribs=True, kw_only=True)
-class HighSchoolScoring(ScoringEvent):
+class CollegeScoring(_ScoringEvent):
+    label: CollegeLabel = attr.ib(validator=instance_of(CollegeLabel), order=False)
+
+
+@attr.s(frozen=True, slots=True, eq=True, order=True, auto_attribs=True, kw_only=True)
+class HighSchoolScoring(_ScoringEvent):
     label: HighSchoolLabel = attr.ib(
         validator=instance_of(HighSchoolLabel), order=False
     )
-
-    @property
-    def period(self):
-        if 0 <= self.time_stamp.minute < 2:
-            return 1
-        elif 2 <= self.time_stamp.minute < 4:
-            return 2
-        elif 4 <= self.time_stamp.minute < 6:
-            return 3
-        elif self.time_stamp.minute >= 6:
-            return 4
-        else:
-            raise ValueError(
-                f"Unexpected time value: {self.time_stamp}, "
-                f"could not determine `period`."
-            )
-
-    @property
-    def formatted_label(self):
-        if self.label.name == 'START':
-            return 'START'
-        if self.focus_color == self.initiator:
-            return f"f{self.label.name}"
-        elif self.focus_color != self.initiator:
-            return f"o{self.label.name}"
-        else:
-            raise ValueError(
-                f'Expected "red" or "green" '
-                f"for `focus_color` AND "
-                f"`initiator`, got {self.focus_color} and "
-                f"{self.initiator}."
-            )
-
-    def to_dict(self):
-        return dict(
-            time=self.formatted_time,
-            period=self.period,
-            str_label=self.formatted_label,
-            label=self.label
-        )
