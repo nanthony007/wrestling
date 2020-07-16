@@ -4,8 +4,33 @@ import pandas as pd
 margin = dict(l=0, r=0, b=0, t=0, pad=0)
 
 
-def draw_match_timeseries(ts_dict):
-    tdf = pd.DataFrame.from_records(ts_dict)
+# MAIN CHARTS
+def draw_results_hist(match_dicts):
+    df = pd.DataFrame.from_records(match_dicts)
+    return px.histogram(
+        df,
+        x="method",
+        histfunc="count",
+        color="result",
+        barmode="group",
+        category_orders=dict(
+            method=["Decision", "Major", "Tech", "Fall", "Forfeit"],
+            result=["Win", "Loss"],
+        ),
+        color_discrete_sequence=["gold", "black"],
+        labels=dict(method="Method", result="Result"),
+    ).update_layout(
+        xaxis_title="Result",
+        yaxis_title="Count",
+        margin=margin,
+        legend=dict(xanchor='center', yanchor='top', x=0.5, y=1.0),
+        legend_orientation="h",
+        legend_title_text=None,
+    )
+
+
+def draw_match_timeseries(match_dicts):
+    tdf = pd.DataFrame.from_records(match_dicts)
     df = pd.melt(
         tdf,
         id_vars=["time", "str_label"],
