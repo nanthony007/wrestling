@@ -177,7 +177,7 @@ class CollegeMatch(Match):
     def _check_duration(self, attrib, val):
         # cannot pins or techs not normal time
         if self.result in {Result.WIN_TECH, Result.WIN_FALL, Result.LOSS_TECH,
-                           Result.LOSS_FALL}:
+                           Result.LOSS_FALL, Result.NO_CONTEST}:
             if val == 420:  # if duration is default
                 raise ValueError(f"Duration cannot be a normal match when the result "
                                  f"is a Tech/Fall.")
@@ -211,7 +211,7 @@ class HighSchoolMatch(Match):
     def _check_duration(self, attrib, val):
         # cannot pins or techs not normal time
         if self.result in {Result.WIN_TECH, Result.WIN_FALL, Result.LOSS_TECH,
-                           Result.LOSS_FALL}:
+                           Result.LOSS_FALL, Result.NO_CONTEST}:
             if val == 360:  # if duration is default
                 raise ValueError(f"Duration cannot be a normal match when the result "
                                  f"is a Tech/Fall.")
