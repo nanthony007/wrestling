@@ -2,7 +2,7 @@
 
 from typing import Tuple
 
-always = [
+_always = [
     "fBOT",
     "fTOP",
     "fNEU",
@@ -35,17 +35,17 @@ _hs_focus_bottom = ["oN2", "oN3", "fE1", "fR2"]
 _hs_neutral = ["fT2", "oT2"]
 
 COLLEGE_SEQUENCES = dict(
-    neutral=set(_college_neutral + always),
-    top=set(_college_focus_top + always),
-    bottom=set(_college_focus_bottom + always),
-    always=set(always),
+    neutral=set(_college_neutral + _always),
+    top=set(_college_focus_top + _always),
+    bottom=set(_college_focus_bottom + _always),
+    always=set(_always),
 )
 
 HS_SEQUENCES = dict(
-    neutral=set(_hs_neutral + always),
-    top=set(_hs_focus_top + always),
-    bottom=set(_hs_focus_bottom + always),
-    always=set(always),
+    neutral=set(_hs_neutral + _always),
+    top=set(_hs_focus_top + _always),
+    bottom=set(_hs_focus_bottom + _always),
+    always=set(_always),
 )
 
 
@@ -64,16 +64,17 @@ def isvalid_sequence(level: str, time_series: Tuple):
     # skips iteration the last value because we check the next
     # skips first because we manually insert START
     for i, score in enumerate(time_series[:-1]):
-		# current time can't be larger than next time
-		if time_series[i].time_stamp > time_series[i + 1].time_stamp:
-			raise ValueError(
-				f"Values in `time_series` appear to be sorted incorrectly.")
-		lab = score.formatted_label
-		if position == "neutral":
-			if lab not in sequences['neutral']:
-				raise ValueError(
-					f"Not a valid neutral move, expected one of"
-					f" {sequences['neutral']}, but got {lab}."
+        # current time can't be larger than next time
+        if time_series[i].time_stamp > time_series[i + 1].time_stamp:
+            raise ValueError(
+                f"Values in `time_series` appear to be sorted incorrectly."
+            )
+        lab = score.formatted_label
+        if position == "neutral":
+            if lab not in sequences["neutral"]:
+                raise ValueError(
+                    f"Not a valid neutral move, expected one of"
+                    f" {sequences['neutral']}, but got {lab}."
                 )
             if lab == "fT2" or lab == "oBOT":
                 position = "top"
