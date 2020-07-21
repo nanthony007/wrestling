@@ -137,6 +137,7 @@ class Match(object):
                 date=datetime.strftime(getattr(self, 'date_'), "%Y-%m-%d %H:%M:%S"),
                 text_result=getattr(self, 'result').text,
                 num_result=getattr(self, 'result').value,
+                duration=getattr(self, 'duration'),
                 overtime=getattr(self, 'overtime'),
                 video=getattr(self, 'video_url'),
                 win=getattr(self, 'result').win,
@@ -172,6 +173,15 @@ class CollegeMatch(Match):
         if val not in _college_weights:
             raise ValueError(f"Expected on of: {_college_weights!r}, but got {val!r}.")
 
+    @duration.validator
+    def _check_duration(self, attrib, val):
+        # cannot pins or techs not normal time
+        if self.result in {Result.WIN_TECH, Result.WIN_FALL, Result.LOSS_TECH,
+                           Result.LOSS_FALL}:
+            if val == 420:  # if duration is default
+                raise ValueError(f"Duration cannot be a normal match when the result "
+                                 f"is a Tech/Fall.")
+
     @time_series.validator
     def _check_time_series(self, attrib, val):
 
@@ -196,6 +206,15 @@ class HighSchoolMatch(Match):
     time_series: Tuple[HighSchoolScoring] = attr.ib(
         validator=instance_of(Tuple), order=False, repr=lambda x: f"{len(x)} actions"
     )
+
+    @duration.validator
+    def _check_duration(self, attrib, val):
+        # cannot pins or techs not normal time
+        if self.result in {Result.WIN_TECH, Result.WIN_FALL, Result.LOSS_TECH,
+                           Result.LOSS_FALL}:
+            if val == 360:  # if duration is default
+                raise ValueError(f"Duration cannot be a normal match when the result "
+                                 f"is a Tech/Fall.")
 
     @time_series.validator
     def _check_time_series(self, attrib, val):
