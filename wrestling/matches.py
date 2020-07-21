@@ -12,7 +12,7 @@ from typing import Optional, Union, Set, Tuple
 from datetime import datetime
 from urllib.parse import quote
 
-from wrestling.sequences import isvalid_sequence
+from wrestling.sequence import isvalid_sequence
 from wrestling.enumerations import Result
 from wrestling.events import Event
 from wrestling.scoring import CollegeScoring, HighSchoolScoring
@@ -109,8 +109,9 @@ class Match(object):
 
     # custom settings for TS bc we need to insert the names and the event name for
     # analyses later
-    def to_dict(self, time_series_only: Optional[bool] = False):
-        if time_series_only:
+    def to_dict(self, ts_only: Optional[bool] = False,
+                results_only: Optional[bool] = False):
+        if ts_only:
             ts = tuple(
                 dict(
                     x.to_dict(), **dict(
@@ -120,6 +121,10 @@ class Match(object):
                 ) for x in getattr(self, 'time_series')
             )
             return ts
+        elif results_only:
+            result = getattr(self, 'result').text
+            binary, method = result.split()
+            return dict(binary=binary, method=method)
         else:
             return dict(
                 focus_name=getattr(self, 'focus').name,
@@ -135,7 +140,7 @@ class Match(object):
                 overtime=getattr(self, 'overtime'),
                 video=getattr(self, 'video_url'),
                 win=getattr(self, 'result').win,
-                bonuns=getattr(self, 'result').bonus,
+                bonus=getattr(self, 'result').bonus,
                 pin=getattr(self, 'result').pin,
                 team_pts=getattr(self, 'result').team_points,
                 focus_pts=getattr(self, 'focus_pts'),
