@@ -13,11 +13,10 @@ class Result(enum.IntEnum):
     LOSS_TECH = -3
     LOSS_FALL = -4
     # anytime the match didn't fully end (disq, default, forfeit, inj, etc)
-    NO_CONTEST = 0  # ask tyler about NC
+    NO_CONTEST = 0  # ask tyler about NC 
 
     @property
     def text(self):
-        #  split string
         return " ".join([x for x in self.name.split("_")]).title()
 
     @property
@@ -45,10 +44,28 @@ class Result(enum.IntEnum):
         else:  # loss
             return 0
 
+    # get enum instance from base string w/ validation
+    @classmethod
+    def from_text(cls, result_text):
+        if not isinstance(result_text, str):
+            raise TypeError(f"Expected type str', got type {type(result_text)!r}.")
+        if len(result_text.split()) != 2:
+            raise ValueError(
+                f"Expected two strings, ex: 'win fall', got {result_text!r}.")
+        r1, r2 = result_text.split()
+        if r1.lower() != 'win' and r1.lower() != 'loss':
+            raise ValueError(
+                f"Invalid binary result, expected one of 'win' or 'loss', got {r1!r}.")
+        if r2.lower() not in {'decision', 'major', 'tech', 'fall'}:
+            raise ValueError(
+                f"Invalid method, expected one of 'decision', 'major', 'tech', 'fall', got {r1!r}.")
+        # todo: add something for the default/disq (no-contest) here
+        return cls[result_text.upper().replace(' ', '_')]
+
 
 # eligibility section
 @enum.unique
-class Year(enum.Enum):
+class Year(str, enum.Enum):
     FR = "Freshman"
     SO = "Sophomore"
     JR = "Junior"
@@ -57,6 +74,12 @@ class Year(enum.Enum):
     RS_SO = "Redshirt Sophomore"
     RS_JR = "Redshirt Junior"
     RS_SR = "Redshirt Senior"
+    HS_7 = "7"
+    HS_8 = "8"
+    HS_9 = "9"
+    HS_10 = "10"
+    HS_11 = "11"
+    HS_12 = "12"
 
 
 # labels section
@@ -74,7 +97,7 @@ class CollegeLabel(aenum.IntEnum, settings=aenum.NoAlias):
     WS = 0
     S1 = 1
     S2 = 2
-    RT1 = 1  # college only
+    RO1 = 1  # college only
     # choices section
     BOT = 0
     TOP = 0
