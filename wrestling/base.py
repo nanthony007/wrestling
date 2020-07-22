@@ -10,7 +10,7 @@ YEARS = {"Fr.", "So.", "Jr.", "Sr.", 'RS Fr.', 'RS So.', 'RS Jr.', 'RS Sr.', '7'
 
 
 # check attr.s and attr.ib params (slots, order, eq, etc.)
-@attr.s(auto_attribs=True)
+@attr.s(auto_attribs=True, eq=False, order=False, slots=True)
 class Mark(object):
     tag: Union[str, int] = attr.ib()
     isvalid: bool = attr.ib(default=True, init=False, validator=instance_of(bool))
