@@ -6,7 +6,7 @@ from attr.validators import instance_of
 from wrestling import base
 import logging
 
-logging.basicConfig(filename='logfile.log')
+logging.basicConfig(filename='logfile.log', filemode='a')
 logger = logging.getLogger('Wrestler')
 
 

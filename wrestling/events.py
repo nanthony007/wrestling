@@ -6,7 +6,7 @@ import logging
 from wrestling import base
 import warnings
 
-logging.basicConfig(filename='logfile.log')
+logging.basicConfig(filename='logfile.log', filemode='a')
 logger = logging.getLogger('Event')
 
 
