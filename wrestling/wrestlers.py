@@ -23,31 +23,31 @@ class Wrestler(object):
     team: str = attr.ib(
         converter=convert_to_title, validator=instance_of(str), order=False
     )
-    _year: Optional[Union[base.Mark, None]] = attr.ib(
-        default=None, order=False, eq=False
+    _grade: Optional[Union[base.Mark, None]] = attr.ib(
+        default=None, order=False, eq=False, repr=lambda x: x.tag
     )
 
     def __attrs_post_init__(self):
-        self.check_year_input()
+        self.grade_input_handler()
 
     @property
-    def year(self):
-        if self.year:
-            return self._year.tag
-        return self._year
+    def grade(self):
+        if self._grade:
+            return self._grade.tag
+        return self._grade
 
-    def check_year_input(self):
-        if self._year:
-            if self._year.tag not in base.YEARS:
+    def grade_input_handler(self):
+        if self._grade:
+            if self._grade.tag not in base.YEARS:
                 message = f'Invalid year, expected one of {base.YEARS}, ' \
-                          f'got {self._year.tag!r}.'
-                self._year.isvalid = False
-                self._year.msg = message
+                          f'got {self._grade.tag!r}.'
+                self._grade.isvalid = False
+                self._grade.msg = message
                 logger.info(message)
 
     def to_dict(self):
         return dict(
             name=self.name,
             team=self.team,
-            year=self.year
+            grade=self.grade
         )
