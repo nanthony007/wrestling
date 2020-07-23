@@ -8,14 +8,14 @@ from datetime import time
 
 import abc
 
-from wrestling.enumerations import CollegeLabel, HighSchoolLabel
+from wrestling import base
 
 
 # todo: find a way to validate period based on timestamp.
 
 
-@attr.s(frozen=True, slots=True, eq=True, order=True, auto_attribs=True, kw_only=True)
-class _ScoringEvent(object):
+@attr.s(slots=True, eq=True, order=True, auto_attribs=True, kw_only=True)
+class ScoringEvent(object):
     time_stamp: time = attr.ib(validator=instance_of(time), order=True)
     initiator: str = attr.ib(
         validator=[instance_of(str), in_(("red", "green"))], order=False,
@@ -31,12 +31,12 @@ class _ScoringEvent(object):
         pass
 
     @period.validator
-    def _check_period(self, attrib, val):
+    def check_period(self, attribute, val):
         if val >= 5 or val < 1:
             raise ValueError(f"Expected period between 1-4, got {val!r}.")
 
     @time_stamp.validator
-    def _check_time_stamp(self, _, val):
+    def check_time_stamp(self, attribute, val):
         if val.hour != 0:
             raise ValueError(f"`hour` field of timestamp must be 0 (zero).")
 
@@ -46,12 +46,10 @@ class _ScoringEvent(object):
 
     @property
     def formatted_label(self):
-        if self.label.name == 'START':
-            return 'START'
         if self.focus_color == self.initiator:
-            return f"f{self.label.name}"
+            return f"f{self.label.tag}"
         elif self.focus_color != self.initiator:
-            return f"o{self.label.name}"
+            return f"o{self.label.tag}"
         else:
             raise ValueError(
                 f'Expected "red" or "green" '
@@ -69,13 +67,12 @@ class _ScoringEvent(object):
         )
 
 
-@attr.s(frozen=True, slots=True, eq=True, order=True, auto_attribs=True, kw_only=True)
-class CollegeScoring(_ScoringEvent):
-    label: CollegeLabel = attr.ib(validator=instance_of(CollegeLabel), order=False)
+@attr.s(slots=True, eq=True, order=True, auto_attribs=True, kw_only=True)
+class CollegeScoring(ScoringEvent):
+    label: base.CollegeLabel = attr.ib(validator=instance_of(base.CollegeLabel),
+                                       order=False)
 
 
-@attr.s(frozen=True, slots=True, eq=True, order=True, auto_attribs=True, kw_only=True)
-class HighSchoolScoring(_ScoringEvent):
-    label: HighSchoolLabel = attr.ib(
-        validator=instance_of(HighSchoolLabel), order=False
-    )
+@attr.s(slots=True, eq=True, order=True, auto_attribs=True, kw_only=True)
+class HSScoring(ScoringEvent):
+    label: base.HSLabel = attr.ib(validator=instance_of(base.HSLabel), order=False)
