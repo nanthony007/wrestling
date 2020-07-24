@@ -23,7 +23,7 @@ logger = logging.getLogger("Match")
 
 @attr.s(frozen=True, slots=True, order=True, eq=True, kw_only=True, auto_attribs=True)
 class Match(object):
-    id: str = attr.ib(validator=instance_of(str), repr=False, order=False)
+    _id: str = attr.ib(validator=instance_of(str), repr=False, order=False)
     # enter at your own risk
     base_url: Optional[Union[str, None]] = attr.ib(
         default=None, repr=False, order=False
@@ -31,7 +31,7 @@ class Match(object):
     event: Event = attr.ib(
         validator=instance_of(Event), repr=lambda x: x.name, order=False
     )
-    date_: datetime = attr.ib(validator=instance_of(datetime), order=True, repr=False)
+    date: datetime = attr.ib(validator=instance_of(datetime), order=True, repr=False)
     result: base.Result = attr.ib(
         validator=instance_of(base.Result), order=False, repr=lambda x: x.text
     )
@@ -44,12 +44,12 @@ class Match(object):
     opponent: Wrestler = attr.ib(
         validator=instance_of(Wrestler), order=False, repr=lambda x: x.name
     )
-    _weight: base.Mark = attr.ib(validator=instance_of(base.Mark))
+    _weight: base.Mark = attr.ib(validator=instance_of(base.Mark), repr=lambda x: x.tag)
 
     def __attrs_post_init__(self):
         self.check_weight_input()
 
-    @id.validator
+    @_id.validator
     def check_id(self, attribute, value):
         if len(value) < 50 or len(value) > 120:
             raise ValueError(
@@ -79,7 +79,7 @@ class Match(object):
 
     @property
     def video_url(self):
-        return f"{self.base_url}/{quote(self.id)}" if self.base_url else None
+        return f"{self.base_url}/{quote(self._id)}" if self.base_url else None
 
     @property
     def focus_pts(self):
@@ -102,9 +102,9 @@ class Match(object):
     def calculate_pts(self, athlete_filter):
         return sum(
             (
-                event.label.value
-                for event in getattr(self, "time_series")
-                if event.formatted_label.startswith(athlete_filter)
+                action.label.value
+                for action in getattr(self, "time_series")
+                if action.formatted_label.startswith(athlete_filter)
             )
         )
 
@@ -135,10 +135,10 @@ class Match(object):
                 focus_team=getattr(self, "focus").team,
                 opp_name=getattr(self, "opponent").name,
                 opp_team=getattr(self, "opponent").team,
-                weight=getattr(self, "weight_class"),
+                weight=getattr(self, "weight"),
                 event_name=getattr(self, "event").name,
-                event_type=getattr(self, "event").type_,
-                date=datetime.strftime(getattr(self, "date_"), "%Y-%m-%d %H:%M:%S"),
+                event_type=getattr(self, "event").kind,
+                date=datetime.strftime(getattr(self, "date"), "%Y-%m-%d %H:%M:%S"),
                 text_result=getattr(self, "result").text,
                 num_result=getattr(self, "result").value,
                 duration=getattr(self, "duration"),
@@ -161,7 +161,7 @@ class CollegeMatch(Match):
     duration: Optional[int] = attr.ib(default=420, validator=instance_of(int))
     # auto sorts (based on time)
     time_series: Tuple[CollegeScoring] = attr.ib(
-        validator=instance_of(Tuple), order=False, repr=lambda x: f"{len(x)}events"
+        validator=instance_of(Tuple), order=False, repr=lambda x: f"{len(x)} actions"
     )
 
     def __attrs_post_init__(self):
@@ -185,7 +185,7 @@ class HSMatch(Match):
     duration: Optional[int] = attr.ib(default=360, validator=instance_of(int))
     # auto sorts (based on time)
     time_series: Tuple[HSScoring] = attr.ib(
-        order=False, repr=lambda x: f"{len(x)}events"
+        order=False, repr=lambda x: f"{len(x)} actions"
     )
 
     def __attrs_post_init__(self):
