@@ -1,43 +1,68 @@
 import plotly.express as px
 import pandas as pd
 from collections import Counter
-from .enumerations import CollegeLabel, HighSchoolLabel
+from wrestling.base import CollegeLabel, HSLabel
 
-margin = dict(l=0, r=0, b=0, t=0, pad=0)
+_margin = dict(l=0, r=0, b=0, t=0, pad=0)
 
 
 # MAIN CHARTS
 def draw_results_hist(match_list):
-    df = pd.DataFrame.from_records((m.to_dict() for m in match_list))
+    df = pd.DataFrame.from_records((m.to_dict(results_only=True) for m in match_list))
     return px.histogram(
         df,
-        x="method",
+        y="method",
         histfunc="count",
-        color="result",
+        color="binary",
         barmode="group",
         category_orders=dict(
-            method=["Decision", "Major", "Tech", "Fall", "Forfeit"],
-            result=["Win", "Loss"],
+            method=["Decision", "Major", "Tech", "Fall", "Contest"],
+            result=["Win", "Loss", "No"],
         ),
         color_discrete_sequence=["gold", "black"],
         labels=dict(method="Method", result="Result"),
     ).update_layout(
-        xaxis_title="Result",
-        yaxis_title="Count",
-        margin=margin,
-        legend=dict(xanchor="center", yanchor="top", x=0.5, y=1.0),
+        xaxis_title="Count",
+        yaxis_title="Result",
+        margin=_margin,
+        legend=dict(xanchor="center", yanchor="bottom", x=0.5, y=1.0),
         legend_orientation="h",
         legend_title_text=None,
     )
 
 
-def draw_match_timeseries(match_list):
+def draw_match_timeseries(match):
     # import add points function and run it on dict!
-    # (m.to_dict(time_series_only=True) for m in match_list)
+    def add_ts_points(ts_dict):
+        for i, d in enumerate(ts_dict):
+            if i == 0:
+                ts_dict[i]['focus_score'] = 0
+                ts_dict[i]['opp_score'] = 0
+                continue
+            if d['str_label'].startswith('f'):
+                ts_dict[i]['focus_score'] = ts_dict[i]['label'].value + ts_dict[i - 1][
+                    'focus_score']
+                ts_dict[i]['opp_score'] = ts_dict[i - 1]['opp_score']
+            elif d['str_label'].startswith('o'):
+                ts_dict[i]['focus_score'] = ts_dict[i - 1]['focus_score']
+                ts_dict[i]['opp_score'] = ts_dict[i]['label'].value + ts_dict[i - 1][
+                    'opp_score']
+            else:
+                raise ValueError(
+                    f"Invalid `str_label`, expected startswith = 'o' or 'f', got {d['str_label']}")
+        return ts_dict
+
+    ts = list(add_ts_points(match.to_dict(time_series_only=True)))
+
     # add START to dict!
-    # add points!
+    # copies first entry for all values then re-assigns 3 START-related ones
+    ts.insert(0, ts[0])
+    ts[0]['time'] = '00:00'
+    ts[0]['period'] = 1
+    ts[0]['str_label'] = 'START'
+
     # make df
-    temp_df = pd.DataFrame.from_records((m.to_dict() for m in match_list))
+    temp_df = pd.DataFrame.from_records(ts)
     df = pd.melt(
         temp_df, id_vars=["time", "str_label"], value_vars=["focus_score", "opp_score"],
     )
@@ -69,8 +94,8 @@ def draw_match_timeseries(match_list):
         )
             .update_xaxes(showticklabels=False, )
             .update_layout(
-            margin=margin,
-            legend=dict(xanchor="center", yanchor="top", x=0.5, y=1.0),
+            margin=_margin,
+            legend=dict(xanchor="center", yanchor="bottom", x=0.5, y=1.0),
             legend_orientation="h",
             legend_title_text=None,
             hovermode="x",
@@ -87,11 +112,12 @@ def draw_results_sunburst(match_list):
         path=["result", "method"],
         color_discrete_sequence=["gold", "black"],
         labels=dict(result="Result", method="Method", ),
-    ).update_layout(margin=margin, )
+    ).update_layout(margin=_margin, )
 
 
 def draw_results_timeseries(match_list):
     df = pd.DataFrame.from_records((m.to_dict() for m in match_list))
+    df = df[['date', 'event_name', 'num_result', 'text_result']]
     return (
         px.scatter(
             df,
@@ -108,8 +134,8 @@ def draw_results_timeseries(match_list):
         )
             .update_yaxes(range=[-4.5, 4.5], title_text="Result", )
             .update_layout(
-            margin=margin,
-            legend=dict(xanchor="center", yanchor="top", x=0.5, y=1.0),
+            margin=_margin,
+            legend=dict(xanchor="center", yanchor="bottom", x=0.5, y=1.0),
             legend_orientation="h",
             legend_title_text=None,
             hovermode="x",
@@ -124,7 +150,7 @@ def draw_points_sunburst(match_list):
     df = pd.DataFrame.from_records(tuple(sum(dicts, ())))  # flattens
     return px.sunburst(
         df, path=["period", "str_label"], color_discrete_sequence=["gold", "black"],
-    ).update_layout(margin=margin, showlegend=True, legend_title_text="Athlete")
+    ).update_layout(margin=_margin, showlegend=True, legend_title_text="Athlete")
 
 
 # needs work!
@@ -172,7 +198,7 @@ def draw_points_hist(match_list, points_toggle, level):
         ),
         color_discrete_sequence=["black", "gold"],
     ).update_layout(
-        margin=margin,
+        margin=_margin,
         xaxis_title="Points" if points_toggle else "Counts",
         yaxis_title="Technique",
         legend=dict(

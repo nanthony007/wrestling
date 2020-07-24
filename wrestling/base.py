@@ -118,7 +118,6 @@ class CollegeLabel(Mark):
 
     @property
     def valid_labels(self):
-        # todo: add in Fall?
         return {
             "T2",
             "E1",
@@ -136,6 +135,10 @@ class CollegeLabel(Mark):
             "TOP",
             "NEU",
             "DEFER",
+            "Fall",
+            "Tech Fall",
+            "Forfeit",
+            "Default",
         }
 
     @property
@@ -157,6 +160,10 @@ class CollegeLabel(Mark):
             "TOP": 0,
             "NEU": 0,
             "DEFER": 0,
+            "Fall": 0,
+            "Tech Fall": 0,
+            "Forfeit": 0,
+            "Default": 0,
         }
 
 
@@ -178,7 +185,6 @@ class HSLabel(Mark):
 
     @property
     def valid_labels(self):
-        # todo: add in Fall?
         return {
             "T2",
             "E1",
@@ -195,6 +201,10 @@ class HSLabel(Mark):
             "TOP",
             "NEU",
             "DEFER",
+            "Fall",
+            "Tech Fall",
+            "Forfeit",
+            "Default",
         }
 
     @property
@@ -215,4 +225,8 @@ class HSLabel(Mark):
             "TOP": 0,
             "NEU": 0,
             "DEFER": 0,
+            "Fall": 0,
+            "Tech Fall": 0,
+            "Forfeit": 0,
+            "Default": 0,
         }
