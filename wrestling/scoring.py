@@ -23,17 +23,13 @@ class ScoringEvent(object):
     focus_color: str = attr.ib(
         validator=[instance_of(str), in_(("red", "green"))], order=False, repr=False
     )
-    period: int = attr.ib(validator=instance_of(int), order=False, repr=False)
+    period: int = attr.ib(validator=instance_of(int), order=False,
+                          repr=False)
 
     @property
     @abc.abstractmethod
     def label(self):
         pass
-
-    @period.validator
-    def check_period(self, attribute, val):
-        if val >= 5 or val < 1:
-            raise ValueError(f"Expected period between 1-4, got {val!r}.")
 
     @time_stamp.validator
     def check_time_stamp(self, attribute, val):
@@ -70,9 +66,10 @@ class ScoringEvent(object):
 @attr.s(slots=True, eq=True, order=True, auto_attribs=True, kw_only=True)
 class CollegeScoring(ScoringEvent):
     label: base.CollegeLabel = attr.ib(validator=instance_of(base.CollegeLabel),
-                                       order=False)
+                                       order=False, repr=lambda x: x.tag)
 
 
 @attr.s(slots=True, eq=True, order=True, auto_attribs=True, kw_only=True)
 class HSScoring(ScoringEvent):
-    label: base.HSLabel = attr.ib(validator=instance_of(base.HSLabel), order=False)
+    label: base.HSLabel = attr.ib(validator=instance_of(base.HSLabel), order=False,
+                                  repr=lambda x: x.tag)
