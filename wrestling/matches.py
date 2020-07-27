@@ -97,6 +97,28 @@ class Match(object):
     def td_diff(self):
         # default 0 if attribute not found
         return getattr(self, "fT2", 0) - getattr(self, "oT2", 0)
+    
+    @property
+    def isvalid(self):
+        # match attrs, only weight
+        if isinstance(self._weight, base.Mark):
+            if not self._weight.isvalid:
+                return False
+        # ts attrs
+        if not all((score.label.isvalid for score in self.time_series)):
+            return False
+        # event attrs
+        if isinstance(self.event._kind, base.Mark):
+            if not self.event._kind.isvalid:
+                return False
+        # wrestler attrs
+        if isinstance(self.focus._grade, base.Mark):
+            if not self.focus._grade.isvalid:
+                return False
+        if isinstance(self.opponent._grade, base.Mark):
+            if not self.opponent._grade.isvalid:
+                return False
+        return True
 
     # 'f' or 'o' filter
     def calculate_pts(self, athlete_filter):
@@ -174,9 +196,8 @@ class CollegeMatch(Match):
                 f"All of the items in the `time_series` set must be "
                 f"`CollegeScoring` objects."
             )
-        # todo: check this function
-        # if not isvalid_sequence("college", value):
-        #     raise ValueError(f"Time series sequence appears invalid...")
+        if not isvalid_sequence("college", value):
+            raise ValueError(f"Time series sequence appears invalid...")
 
 
 @attr.s(frozen=True, slots=True, order=True, eq=True, kw_only=True, auto_attribs=True)
@@ -198,6 +219,5 @@ class HSMatch(Match):
                 f"All of the items in the `time_series` set must be "
                 f"`HighSchoolScoring` objects."
             )
-        # todo: check this function
-        # if not isvalid_sequence("college", value):
-        #     raise ValueError(f"Time series sequence appears invalid...")
+        if not isvalid_sequence("high school", value):
+            raise ValueError(f"Time series sequence appears invalid...")
