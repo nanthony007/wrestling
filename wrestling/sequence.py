@@ -49,7 +49,26 @@ HS_SEQUENCES = dict(
 )
 
 
-# todo: refactor based on Mark class changes
+def check_neutral(score, seq):
+    if score.formatted_label not in seq and (not score.formatted_label.endswith('Succ') or not score.formatted_label.endswith('Fail')):
+        # invalid
+        score.label.isvalid = False
+        score.label.msg = f"Not a valid neutral move, expected one of {seq}, but got {score.formatted_label!r}."
+        
+
+def check_top(score, seq):
+    if score.formatted_label not in seq and (not score.formatted_label.endswith('Succ') or not score.formatted_label.endswith('Fail')):
+        # invalid
+        score.label.isvalid = False
+        score.label.msg =f"Not a valid top move, expected one of {seq}, but got {score.formatted_label!r}."
+        
+def check_bottom(score, seq):
+    if score.formatted_label not in seq and (not score.formatted_label.endswith('Succ') or not score.formatted_label.endswith('Fail')):
+        # invalid
+        score.label.isvalid = False
+        score.label.msg = f"Not a valid bottom move, expected one of {seq}, but got {score.formatted_label!r}."
+        
+
 # checks formatted label strings (fT2 or oE1)
 # checks value and evaluates list of possible next values
 def isvalid_sequence(level: str, time_series: Tuple):
@@ -69,36 +88,23 @@ def isvalid_sequence(level: str, time_series: Tuple):
             raise ValueError(
                 f"Values in `time_series` appear to be sorted incorrectly."
             )
-        lab = score.formatted_label
         if position == "neutral":
-            if lab not in sequences["neutral"]:
-                raise ValueError(
-                    f"Not a valid neutral move, expected one of"
-                    f" {sequences['neutral']}, but got {lab}."
-                )
-            if lab == "fT2" or lab == "oBOT":
+            check_neutral(score, sequences['neutral'])
+            if score.formatted_label == "fT2" or score.formatted_label == "oBOT":
                 position = "top"
-            elif lab == "oT2" or lab == "fBOT":
+            elif score.formatted_label == "oT2" or score.formatted_label == "fBOT":
                 position = "bottom"
         elif position == "top":
-            if lab not in sequences["top"]:
-                raise ValueError(
-                    f"Not a valid neutral move, expected one of"
-                    f" {sequences['top']}, but got {lab}."
-                )
-            if lab == "oE1" or lab == "fNEU" or lab == "oNEU":
+            check_top(score, sequences['top'])
+            if score.formatted_label == "oE1" or score.formatted_label == "fNEU" or score.formatted_label == "oNEU":
                 position = "neutral"
-            elif lab == "oR2" or lab == "fBOT" or lab == "oTOP":
+            elif score.formatted_label == "oR2" or score.formatted_label == "fBOT" or score.formatted_label == "oTOP":
                 position = "bottom"
         elif position == "bottom":
-            if lab not in sequences["bottom"]:
-                raise ValueError(
-                    f"Not a valid neutral move, expected one of"
-                    f" {sequences['bottom']}, but got {lab}."
-                )
-            if lab == "fE1" or lab == "fNEU" or lab == "oNEU":
+            check_bottom(score, sequences['bottom'])
+            if score.formatted_label == "fE1" or score.formatted_label == "fNEU" or score.formatted_label == "oNEU":
                 position = "neutral"
-            elif lab == "fR2" or lab == "oBOT" or lab == "fTOP":
+            elif score.formatted_label == "fR2" or score.formatted_label == "oBOT" or score.formatted_label == "fTOP":
                 position = "top"
         else:
             raise ValueError(
