@@ -2,12 +2,8 @@
 
 import attr
 from attr.validators import instance_of
-import logging
 from wrestling import base
 import warnings
-
-logging.basicConfig(filename='logfile.log', filemode='a')
-logger = logging.getLogger('Event')
 
 
 def convert_event_name(x: str):

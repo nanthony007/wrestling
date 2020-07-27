@@ -15,10 +15,6 @@ from wrestling import base
 from wrestling.events import Event
 from wrestling.scoring import CollegeScoring, HSScoring
 from wrestling.wrestlers import Wrestler
-import logging
-
-logging.basicConfig(filename="logfile.log", filemode="a")
-logger = logging.getLogger("Match")
 
 
 @attr.s(frozen=True, slots=True, order=True, eq=True, kw_only=True, auto_attribs=True)

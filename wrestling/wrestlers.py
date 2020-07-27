@@ -4,10 +4,6 @@ from typing import Optional, Union
 import attr
 from attr.validators import instance_of
 from wrestling import base
-import logging
-
-logging.basicConfig(filename='logfile.log', filemode='a')
-logger = logging.getLogger('Wrestler')
 
 
 def convert_to_title(x: str):

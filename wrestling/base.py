@@ -2,10 +2,6 @@ import enum
 import attr
 from attr.validators import instance_of
 from typing import Union
-import logging
-
-logging.basicConfig(filename="logfile.log", filemode="a")
-logger = logging.getLogger("Base")
 
 # eligibility
 YEARS = {
