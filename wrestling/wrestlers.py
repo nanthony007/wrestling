@@ -24,7 +24,7 @@ class Wrestler(object):
         converter=convert_to_title, validator=instance_of(str), order=False
     )
     _grade: Optional[Union[base.Mark, None]] = attr.ib(
-        default=None, order=False, eq=False, repr=lambda x: x.tag
+        default=None, order=False, eq=False,
     )
 
     def __attrs_post_init__(self):
