@@ -49,6 +49,7 @@ HS_SEQUENCES = dict(
 )
 
 
+# todo: refactor based on Mark class changes
 # checks formatted label strings (fT2 or oE1)
 # checks value and evaluates list of possible next values
 def isvalid_sequence(level: str, time_series: Tuple):
@@ -62,7 +63,6 @@ def isvalid_sequence(level: str, time_series: Tuple):
     sequences = COLLEGE_SEQUENCES if level == "college" else HS_SEQUENCES
     position = "neutral"
     # skips iteration the last value because we check the next
-    # skips first because we manually insert START
     for i, score in enumerate(time_series[:-1]):
         # current time can't be larger than next time
         if time_series[i].time_stamp > time_series[i + 1].time_stamp:

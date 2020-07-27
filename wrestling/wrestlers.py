@@ -1,35 +1,53 @@
 # module for wrestler classes
 
-from typing import Optional, Dict, Tuple
+from typing import Optional, Union
 import attr
 from attr.validators import instance_of
-from wrestling.enumerations import Year
+from wrestling import base
+import logging
+
+logging.basicConfig(filename='logfile.log', filemode='a')
+logger = logging.getLogger('Wrestler')
 
 
-def _convert_to_title(x: str):
+def convert_to_title(x: str):
     return x.title().strip()
 
 
-@attr.s(kw_only=True, auto_attribs=True, order=True)
+# these all need to use Tag
+@attr.s(kw_only=True, auto_attribs=True, order=True, eq=True)
 class Wrestler(object):
     name: str = attr.ib(
-        converter=_convert_to_title, validator=instance_of(str), order=True
+        converter=convert_to_title, validator=instance_of(str), order=True
     )
     team: str = attr.ib(
-        converter=_convert_to_title, validator=instance_of(str), order=False
+        converter=convert_to_title, validator=instance_of(str), order=False
     )
-    year: Optional[Year] = attr.ib(
-        validator=[instance_of(Year)], default=Year.FR, order=False
+    _grade: Optional[Union[base.Mark, None]] = attr.ib(
+        default=None, order=False, eq=False, repr=lambda x: x.tag
     )
 
-    @name.validator
-    def _check_name(self, attrib, val):
-        if ", " not in val:
-            raise ValueError(f"Names should be formatted as `Last, First`, got {val}.")
+    def __attrs_post_init__(self):
+        self.grade_input_handler()
+
+    @property
+    def grade(self):
+        if self._grade:
+            return self._grade.tag
+        return self._grade
+
+    def grade_input_handler(self):
+        if self._grade:
+            if self._grade.tag not in base.YEARS:
+                message = f'Invalid year, expected one of {base.YEARS}, ' \
+                          f'got {self._grade.tag!r}.'
+                self._grade.isvalid = False
+                self._grade.msg = message
+                logger.info(message)
 
     def to_dict(self):
         return dict(
             name=self.name,
             team=self.team,
-            year=self.year.value
+            grade=self.grade
         )
