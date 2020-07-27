@@ -2,23 +2,6 @@
 # coding: utf-8
 
 
-"""
-NAME
-    Process
-
-DESCRIPTION
-    This module contains the primary process functions
-    which use the requesting and formatting modules to capture data from the MatBoss API.
-
-FUNCTIONS
-    generate_match_data(match, event_list, user_level)
-        Returns match values and match timeseries.
-
-    process_api_data(s, year)
-        Returns match and timeseries dataframes and roster series.
-
-"""
-
 from typing import Tuple, List, Dict
 from collections import Counter
 
@@ -31,6 +14,7 @@ from . import api_request, parse
 base_url = "http://staging.matbossapp.com/api/v1/"
 
 
+# new function that formats API data
 def parse_match_data(
     match: Dict, event_list: List[Dict], user_info: dict
 ) -> Tuple[Dict, List[Dict]]:
@@ -67,6 +51,7 @@ def parse_match_data(
     return match_dict, timeseries_dicts
 
 
+# new function that generates objects based on results of above function
 def process_api_data(
     session: requests.sessions.Session, season: str, user_name: str
 ) -> Tuple[List[dict], List[dict], List[str]]:
@@ -108,6 +93,8 @@ def process_api_data(
     return all_matches, all_timeseries, roster
 
 
+# new function that parses the api data AND creates objects
+# i.e. does both of above
 def load_base_data(user_name):
     ses = requests.Session()
     year = "2019-2020"
@@ -115,7 +102,7 @@ def load_base_data(user_name):
     # Creates dataframes
     matchdf = pd.DataFrame(
         matches
-    ) # auto converts (avoids object type)
+    )  # auto converts (avoids object type)
     tsdf = pd.DataFrame(
         timeseries
     ).convert_dtypes()  # auto converts (avoids object type)
