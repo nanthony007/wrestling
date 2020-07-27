@@ -2,98 +2,17 @@
 # coding: utf-8
 
 
-import pandas as pd
-
-from . import calculate as calc
-from . import load_data
-
-
-# does for focus/opp pts totals
-def calculate_pts(row, athlete):
-    pts = 0
-    for col in row.index:
-        if col.startswith(athlete):
-            if col.endswith("1"):
-                pts += row[col]
-            if col.endswith("2"):
-                pts += row[col] * 2
-            if col.endswith("4"):
-                pts += row[col] * 4
-    return pts
-
-
-def calculate_numeric_result(row):
-    if row.result == "Win" and row.method == "Decision":
-        return 1.20
-    elif row.result == "Win" and row.method == "Major":
-        return 1.40
-    elif row.result == "Win" and row.method == "Tech":
-        return 1.60
-    elif row.result == "Win" and row.method == "Fall":
-        return 1.80
-    elif row.result == "Loss" and row.method == "Decision":
-        return 0.80
-    elif row.result == "Loss" and row.method == "Major":
-        return 0.60
-    elif row.result == "Loss" and row.method == "Tech":
-        return 0.40
-    elif row.result == "Loss" and row.method == "Fall":
-        return 0.20
-    else:
-        raise ValueError(row.result, row.method)
-
-
-def extend_matchdf(df):
-    # adds columns
-    df["binary_result"] = df.apply(lambda row: 1 if row.result == "Win" else 0, axis=1)
-    df["bonus"] = df.apply(
-        lambda row: True
-        if row.result == "Win" and row.method in ["Major", "Tech", "Fall"]
-        else False,
-        axis=1,
-    )
-    df["focus_pts"] = df.apply(lambda row: calculate_pts(row, "focus"), axis=1)
-    df["opp_pts"] = df.apply(lambda row: calculate_pts(row, "opp"), axis=1)
-    df["num_result"] = df.apply(lambda row: calculate_numeric_result(row), axis=1)
-    df["td_diff"] = df.apply(lambda row: row.focus_T2 - row.opp_T2, axis=1)
-    df["mov"] = df.apply(lambda row: row.focus_pts - row.opp_pts, axis=1)
-    df["pin"] = df.apply(lambda row: 1 if row.num_result == 1.80 else 0, axis=1)
-    return df
-
-
-def create_movesdf(df, points_toggle, period):
-    points, nonpoints = calc.calculate_moves(df, period)
-    if points_toggle:
-        moves_df = (
-            pd.DataFrame.from_dict(points, orient="index")
-            .reset_index()
-            .rename(columns={"index": "technique", 0: "points"})
-        )
-    else:
-        moves_df = (
-            pd.DataFrame.from_dict(nonpoints, orient="index")
-            .reset_index()
-            .rename(columns={"index": "technique", 0: "count"})
-        )
-    moves_df["wrestler"] = moves_df.apply(
-        lambda row: "Opponent" if row.technique.startswith("opp") else "Focus", axis=1
-    )
-    moves_df["move"] = moves_df.apply(
-        lambda row: row.technique.split("_")[1]
-        if len(row.technique.split("_")) > 1
-        else row.technique,
-        axis=1,
-    )
-    moves_df.drop("technique", axis=1, inplace=True)
-    return moves_df
-
-
+#  can this still be a factory function where we create the 5 main dfs?
+#  are the dfs even needed or are we going to temporarily create them inside the
+#  functions?
+# PROS: less storage/memory in constant use
+# CONS: more computations required (i.e. make ts_df 4 times to make graphs)
 def create_dfs(user_name):
     matches, tsdf, roster = load_data.load_base_data(user_name)
-    matchdf = extend_matchdf(matches)
     return matchdf, tsdf, roster
 
 
+# add into Wrestler class :)
 def generate_roster_df(roster_dicts, athlete_names, df):
     # takes roster dicts from api request
     roster = [

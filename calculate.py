@@ -37,16 +37,6 @@ def calculate_neutral_pts(ser):
     return (numerator / denominator)
 
 
-# deprecated
-def calculate_turn_to_pin_per(ser):
-    numerator = ser.pin  # total pins
-    denominator = ser.focus_N2 + ser.focus_N4  # total turns
-    if denominator > 0:
-        return (numerator / denominator)
-    else:
-        return None  # no turns
-
-
 def calculate_escape_per(ser):
     numerator = ser.focus_E1 + ser.focus_R2  # num of escapes
     denominator = (
@@ -70,45 +60,28 @@ def calculate_turn_per(ser):
 
 
 def calculate_ride_per(ser):
-    numerator = ser.opp_E1 + ser.opp_R2  # num of opp escapes
-    denominator = (
-        ser.focus_T2 + ser.focus_R2 + ser.focus_TOP + ser.opp_BOT
-    )  # top chances
-    if denominator > 0:
-        return (1 - numerator / denominator) * 100
-    else:
-        return None  # no top chances
+	numerator = ser.opp_E1 + ser.opp_R2  # num of opp escapes
+	denominator = (
+			ser.focus_T2 + ser.focus_R2 + ser.focus_TOP + ser.opp_BOT
+	)  # top chances
+	if denominator > 0:
+		return (1 - numerator / denominator) * 100
+	else:
+		return None  # no top chances
 
 
-def calculate_moves(df, period):
-    point_events = {}
-    nonpoint_events = {}
-    if period is not None and period != 'all':
-        df = df[df.period == int(period)]
-    for key, val in Counter(df.event_label).items():
-        if key.endswith("1"):
-            point_events[key] = val
-        elif key.endswith("2"):
-            point_events[key] = val * 2
-        elif key.endswith("4"):
-            point_events[key] = val * 4
-        else:
-            nonpoint_events[key] = val
-    point_events['focus_All'] = sum({k: point_events[k] for k in filter(lambda x: x.startswith('f'), point_events.keys())}.values())
-    point_events['opp_All'] = sum({k: point_events[k] for k in filter(lambda x: x.startswith('o'), point_events.keys())}.values())
-    return point_events, nonpoint_events
-
-
+# todo: KPI related calcs, deal with later
+# KPI visual stuff, deal with later.
 def get_metric_pretty_label(metric_label):
-    label_dict = {
-        'matches': '# Matches',
-        'num_result': 'Numeric Result',
-        'binary_result': 'Win %',
-        'bonus': 'Bonus %',
-        'pin': 'Pin %',
-        'mov': 'MoV',
-        'td_diff': 'Takedown Diff', 
-        'neutral': 'Neutral Pts',
+	label_dict = {
+		'matches': '# Matches',
+		'num_result': 'Numeric Result',
+		'binary_result': 'Win %',
+		'bonus': 'Bonus %',
+		'pin': 'Pin %',
+		'mov': 'MoV',
+		'td_diff': 'Takedown Diff',
+		'neutral': 'Neutral Pts',
         'bottom': 'Bottom Pts', 
         'top': 'Top Pts', 
         'escape': 'Escape %', 
