@@ -1,9 +1,21 @@
-from .events import Event
-from .wrestlers import Wrestler
-from .scoring import HSScoring, CollegeScoring
-from .matches import HSMatch, CollegeMatch
-from .base import CollegeLabel, HSLabel, YEARS, Mark, Result
+"""This package is for wrestling statisics.
 
-# todo: add documentation
-# todo: add tests
-# todo: add formatting and check linting
+The data containers provided can be used to represent the
+various aspects of a match including Wrestlers, Events,
+Scoring Events, and Matches themselves.  These containers
+can all be extended in the future for other styles or rulesets
+in the future.
+
+The only package requirement is attrs.
+
+Important notes:
+    Use Mark class when prompted (as validation will utilize the
+    Mark class extended functionality.)
+
+"""
+
+from .base import CollegeLabel, HSLabel, Mark
+from .events import Event
+from .matches import CollegeMatch, HSMatch
+from .scoring import CollegeScoring, HSScoring
+from .wrestlers import Wrestler

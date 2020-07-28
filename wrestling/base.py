@@ -1,17 +1,18 @@
-#! usr/bin/python
+#! /usr/bin/python
 
 """Module for base classes and globals used throughout the project.
 
 This module contains the Years dictionary, Result enumeration class,
-the Mark class which is foundational to all other classes in the project, 
+the Mark class which is foundational to all other classes in the project,
 and the CollegeLabel and HSLabel classes inheriting from the Mark class.
 
 """
 
 import enum
+from typing import Dict, Set, Union
+
 import attr
 from attr.validators import instance_of
-from typing import Union, Set, Dict
 
 # eligibility
 YEARS = {
@@ -40,8 +41,8 @@ of acceptable years of eligibility.
 class Result(enum.IntEnum):
     """Enumeration class for match Results.
 
-    This class contains information on Results 
-    structured as an enumeration. There are additional properties 
+    This class contains information on Results
+    structured as an enumeration. There are additional properties
     for other metrics that can be identified based on the Result.
 
     Args:
@@ -52,6 +53,7 @@ class Result(enum.IntEnum):
         value (int): Numeric representation of the result.
 
     """
+
     WD = 1
     WM = 2
     WT = 3
@@ -71,24 +73,26 @@ class Result(enum.IntEnum):
             str: Full text of result.
 
         """
+        text = ""
         if self.name == "NC":
-            return "No Contest"
+            text = "No Contest"
         elif self.name == "WD":
-            return "Win Dec"
+            text = "Win Dec"
         elif self.name == "WM":
-            return "Win Major"
+            text = "Win Major"
         elif self.name == "WT":
-            return "Win Tech"
+            text = "Win Tech"
         elif self.name == "WF":
-            return "Win Fall"
+            text = "Win Fall"
         elif self.name == "LD":
-            return "Loss Dec"
+            text = "Loss Dec"
         elif self.name == "LM":
-            return "Loss Major"
+            text = "Loss Major"
         elif self.name == "LT":
-            return "Loss Tech"
+            text = "Loss Tech"
         elif self.name == "LF":
-            return "Loss Fall"
+            text = "Loss Fall"
+        return text
 
     @property
     def win(self) -> bool:
@@ -129,31 +133,34 @@ class Result(enum.IntEnum):
 
         """
         if self.value == 1:
-            return 3
+            val = 3
         elif self.value == 2:
-            return 4
+            val = 4
         elif self.value == 3:
-            return 5
+            val = 5
         elif self.value == 4:
-            return 6
+            val = 6
         else:  # loss
-            return 0
+            val = 0
+        return val
 
 
 @attr.s(auto_attribs=True, eq=False, order=False, slots=True)
 class Mark(object):
     """Mark object which acts as a Meta class for str and int inputs.
 
-    This class should be used whenever validation on a class field is 
-    stonger than simple type validation. Prompts will be provided for 
+    This class should be used whenever validation on a class field is
+    stonger than simple type validation. Prompts will be provided for
     established classes.
 
     Args:
-        tag (str, int): String or Integer value for the Mark.
-        isvalid (bool): Whether tag is valid or invalid, default to True.
-        msg (str): Message for tag.  Defaults to empty string, should be changed if isvalid is False.
+        tag String or Integer value for the Mark.
+        isvalid: Whether tag is valid or invalid, default to True.
+        msg: Message for tag, defaults to empty string, should be changed if isvalid
+        is False.
 
     """
+
     tag: Union[str, int] = attr.ib()
     isvalid: bool = attr.ib(default=True, init=False, validator=instance_of(bool))
     msg: str = attr.ib(default="", init=False, repr=False, validator=instance_of(str))
@@ -168,7 +175,7 @@ class Mark(object):
         """
         if not isinstance(value, str) and not isinstance(value, int):
             raise TypeError(
-                f"`tag` value must be of type 'int' or 'str', got " f"{type(value)!r}."
+                f"`tag` value must be of type 'int' or 'str', got {type(value)!r}."
             )
 
 
@@ -177,15 +184,16 @@ class CollegeLabel(Mark):
     """Label class for College scoring event labels.
 
     Args:
-        value (int): Numeric value for label, different than tag value.
+        value: Numeric value for label, different than tag value.
 
     """
+
     value: int = attr.ib(validator=instance_of(int), init=False, repr=False)
 
     def __attrs_post_init__(self):
-        """Post init hook function. 
+        """Post init hook function.
 
-        This function checks if the label tag is considered a valid label based 
+        This function checks if the label tag is considered a valid label based
         on college (folkstyle) ruleset.  If not it adjusts the 'isvalid' and 'msg'
         attributes accordingly.
 
@@ -266,19 +274,9 @@ class HSLabel(Mark):
     """Label class for High School scoring event labels.
 
     Args:
-        value (int): Numeric value for label, different than tag value.
+        value: Numeric value for label, different than tag value.
 
     """
-    value: int = attr.ib(validator=instance_of(int), init=False, repr=False)
-
-    def __attrs_post_init__(self):
-        """Post init hook function.
-
-        This function checks if the label tag is considered a valid label based
-        on high school ruleset.  If not it adjusts the 'isvalid' and 'msg'
-        attributes accordingly.
-
-        """
 
     value: int = attr.ib(validator=instance_of(int), init=False, repr=False)
 

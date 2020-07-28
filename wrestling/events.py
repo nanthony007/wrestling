@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#! /usr/bin/python
 
 """Module for Events.
 
@@ -7,7 +7,7 @@ validation is stronger than simple type validation, the Mark class is used
 in replace of traditional str or int classes to track accuracy.
 
 Example:
-    event = Event(name='Practice', kind='Dual Meet')
+    event = Event(name='Practice', kind=Mark('Dual Meet'))
 
 """
 
@@ -26,7 +26,7 @@ def convert_event_name(name: str) -> str:
     capitalized the string and strips leading/trailing whitespaces.
 
     Args:
-        name (str): Any string of any length.
+        name: Any string of any length.
 
     Returns:
         str: Capitalized and stripped string.
@@ -43,7 +43,7 @@ class Event(object):
 
     Args:
         name (str): Name of the event.
-        kind (Mark): Type of event, either 'Dual Meet' or 'Tournament'.
+        kind (str): Type of event, either 'Dual Meet' or 'Tournament'.
 
     """
 
@@ -66,7 +66,7 @@ class Event(object):
         """
         return str(self._kind.tag)
 
-    def type_input_handler(self):
+    def type_input_handler(self) -> None:
         """Function to manage validity of 'kind' input attribute via Mark class."""
         if self._kind.tag not in {"Tournament", "Dual Meet"}:
             message = (
@@ -76,7 +76,7 @@ class Event(object):
             self._kind.isvalid = False
             self._kind.msg = message
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> Dict[str, str]:
         """Creates a dictionary representation of an Event instance.
 
         Returns:

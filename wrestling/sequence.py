@@ -1,6 +1,17 @@
-# this module contains the dicts for valid sequence of events
+#! /usr/bin/python
 
-from typing import Tuple
+"""Module for determining validity of time_series sequences.
+
+This module checks the time_series attribute of a Match for its conditional
+validity based on the position.  It is used in the Match.time_series
+validator.  Helper functions for checking the next event in a sequence based
+on a given position are also provided.
+
+"""
+
+from typing import Dict, Set, Tuple, Union
+
+from wrestling.scoring import CollegeScoring, HSScoring
 
 _always = [
     "fBOT",
@@ -40,6 +51,7 @@ COLLEGE_SEQUENCES = dict(
     bottom=set(_college_focus_bottom + _always),
     always=set(_always),
 )
+"""Dictionary of valid college next-moves based on position."""
 
 HS_SEQUENCES = dict(
     neutral=set(_hs_neutral + _always),
@@ -47,31 +59,77 @@ HS_SEQUENCES = dict(
     bottom=set(_hs_focus_bottom + _always),
     always=set(_always),
 )
+"""Dictionary of valid high school next-moves based on position."""
 
 
-def check_neutral(score, seq):
-    if score.formatted_label not in seq and (not score.formatted_label.endswith('Succ') or not score.formatted_label.endswith('Fail')):
+def check_neutral(score: Union[CollegeScoring, HSScoring], seq: Set[str]):
+    """Checks if next move is valid in neutral position.
+
+    Args:
+        score: Either CollegeScoring or HSScoring instance.
+        seq (Dict): HS_SEQUENCES or COLLEGE_SEQUENCES to check the 'score' against.
+
+    """
+    if score.formatted_label not in seq:
         # invalid
         score.label.isvalid = False
-        score.label.msg = f"Not a valid neutral move, expected one of {seq}, but got {score.formatted_label!r}."
-        
+        score.label.msg = (
+            f"Not a valid neutral move, expected one of {seq}, "
+            f"but got {score.formatted_label!r}."
+        )
 
-def check_top(score, seq):
-    if score.formatted_label not in seq and (not score.formatted_label.endswith('Succ') or not score.formatted_label.endswith('Fail')):
+
+def check_top(score: Union[CollegeScoring, HSScoring], seq: Set[str]):
+    """Checks if next move is valid in top position.
+
+    Args:
+        score: Either CollegeScoring or HSScoring instance.
+        seq (Dict): HS_SEQUENCES or COLLEGE_SEQUENCES to check the 'score' against.
+    
+    """
+    if score.formatted_label not in seq:
         # invalid
         score.label.isvalid = False
-        score.label.msg =f"Not a valid top move, expected one of {seq}, but got {score.formatted_label!r}."
-        
-def check_bottom(score, seq):
-    if score.formatted_label not in seq and (not score.formatted_label.endswith('Succ') or not score.formatted_label.endswith('Fail')):
+        score.label.msg = (
+            f"Not a valid top move, expected one of {seq}, "
+            f"but got {score.formatted_label!r}."
+        )
+
+
+def check_bottom(score: Union[CollegeScoring, HSScoring], seq: Set[str]):
+    """Checks if next move is valid in bottom position.
+
+    Args:
+        score: Either CollegeScoring or HSScoring instance.
+        seq (Dict): HS_SEQUENCES or COLLEGE_SEQUENCES to check the 'score' against.
+
+    """
+    if score.formatted_label not in seq:
         # invalid
         score.label.isvalid = False
-        score.label.msg = f"Not a valid bottom move, expected one of {seq}, but got {score.formatted_label!r}."
-        
+        score.label.msg = (
+            f"Not a valid bottom move, expected one of {seq}, "
+            f"but got {score.formatted_label!r}."
+        )
 
-# checks formatted label strings (fT2 or oE1)
-# checks value and evaluates list of possible next values
-def isvalid_sequence(level: str, time_series: Tuple):
+
+def isvalid_sequence(
+        level: str, time_series: Tuple[Union[HSScoring, CollegeScoring]]
+) -> bool:
+    """Checks if entire sequence is valid.
+
+    Args:
+        level: 'high school' or 'college' level for sequence analysis.
+        time_series: Tuple of sorted match time_series events.
+
+    Raises:
+        ValueError: Invalid level.
+        ValueError: Not sorted time_series.
+        ValueError: Invalid position.
+
+    Returns:
+        bool: True if sequence is valid, otherwise raises ValueError.
+    """
     if level not in {"college", "high school"}:
         raise ValueError(
             f"Expected `level` to be one of "
@@ -89,22 +147,38 @@ def isvalid_sequence(level: str, time_series: Tuple):
                 f"Values in `time_series` appear to be sorted incorrectly."
             )
         if position == "neutral":
-            check_neutral(score, sequences['neutral'])
+            check_neutral(score, sequences["neutral"])
             if score.formatted_label == "fT2" or score.formatted_label == "oBOT":
                 position = "top"
             elif score.formatted_label == "oT2" or score.formatted_label == "fBOT":
                 position = "bottom"
         elif position == "top":
-            check_top(score, sequences['top'])
-            if score.formatted_label == "oE1" or score.formatted_label == "fNEU" or score.formatted_label == "oNEU":
+            check_top(score, sequences["top"])
+            if (
+                    score.formatted_label == "oE1"
+                    or score.formatted_label == "fNEU"
+                    or score.formatted_label == "oNEU"
+            ):
                 position = "neutral"
-            elif score.formatted_label == "oR2" or score.formatted_label == "fBOT" or score.formatted_label == "oTOP":
+            elif (
+                    score.formatted_label == "oR2"
+                    or score.formatted_label == "fBOT"
+                    or score.formatted_label == "oTOP"
+            ):
                 position = "bottom"
         elif position == "bottom":
-            check_bottom(score, sequences['bottom'])
-            if score.formatted_label == "fE1" or score.formatted_label == "fNEU" or score.formatted_label == "oNEU":
+            check_bottom(score, sequences["bottom"])
+            if (
+                    score.formatted_label == "fE1"
+                    or score.formatted_label == "fNEU"
+                    or score.formatted_label == "oNEU"
+            ):
                 position = "neutral"
-            elif score.formatted_label == "fR2" or score.formatted_label == "oBOT" or score.formatted_label == "fTOP":
+            elif (
+                    score.formatted_label == "fR2"
+                    or score.formatted_label == "oBOT"
+                    or score.formatted_label == "fTOP"
+            ):
                 position = "top"
         else:
             raise ValueError(
