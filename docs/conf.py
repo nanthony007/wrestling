@@ -31,6 +31,7 @@ release = '0.2'
 # ones.
 extensions = [
 	'sphinx.ext.napoleon',
+	'sphinx.ext.todo',
 ]
 # Napoleon settings
 napoleon_google_docstring = True
