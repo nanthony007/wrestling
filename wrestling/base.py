@@ -1,7 +1,17 @@
+#! usr/bin/python
+
+"""Module for base classes and globals used throughout the project.
+
+This module contains the Years dictionary, Result enumeration class,
+the Mark class which is foundational to all other classes in the project, 
+and the CollegeLabel and HSLabel classes inheriting from the Mark class.
+
+"""
+
 import enum
 import attr
 from attr.validators import instance_of
-from typing import Union
+from typing import Union, Set, Dict
 
 # eligibility
 YEARS = {
@@ -20,10 +30,28 @@ YEARS = {
     "11",
     "12",
 }
+"""str: Module level variable containing string variants
+of acceptable years of eligibility.
+
+"""
 
 
 # result section
 class Result(enum.IntEnum):
+    """Enumeration class for match Results.
+
+    This class contains information on Results 
+    structured as an enumeration. There are additional properties 
+    for other metrics that can be identified based on the Result.
+
+    Args:
+        enum (IntEnum): IntEnum super class.
+
+    Returns:
+        name (str): String abbreviated representation of the result.
+        value (int): Numeric representation of the result.
+
+    """
     WD = 1
     WM = 2
     WT = 3
@@ -36,7 +64,13 @@ class Result(enum.IntEnum):
     NC = 0
 
     @property
-    def text(self):
+    def text(self) -> str:
+        """Expanded text representation of result.
+
+        Returns:
+            str: Full text of result.
+
+        """
         if self.name == "NC":
             return "No Contest"
         elif self.name == "WD":
@@ -57,19 +91,43 @@ class Result(enum.IntEnum):
             return "Loss Fall"
 
     @property
-    def win(self):
+    def win(self) -> bool:
+        """Win or Loss.
+
+        Returns:
+            bool: True if Win, False if Loss.
+
+        """
         return True if self.value > 0 else False
 
     @property
-    def bonus(self):
+    def bonus(self) -> bool:
+        """Identifies whether Result is considered bonus or not.
+
+        Returns:
+            bool: True if considered bonus, else False.
+
+        """
         return True if self.value > 1 or self.value < -1 else False
 
     @property
-    def pin(self):
+    def pin(self) -> bool:
+        """Identifies if Result is a pin variation.
+
+        Returns:
+            bool: True if method of result is Fall, else False.
+
+        """
         return True if self.value == 4 else False
 
     @property
-    def team_points(self):
+    def team_points(self) -> int:
+        """Calculates team points earned based on Result.
+
+        Returns:
+            int: Number of team points earned.
+
+        """
         if self.value == 1:
             return 3
         elif self.value == 2:
@@ -84,12 +142,30 @@ class Result(enum.IntEnum):
 
 @attr.s(auto_attribs=True, eq=False, order=False, slots=True)
 class Mark(object):
+    """Mark object which acts as a Meta class for str and int inputs.
+
+    This class should be used whenever validation on a class field is 
+    stonger than simple type validation. Prompts will be provided for 
+    established classes.
+
+    Args:
+        tag (str, int): String or Integer value for the Mark.
+        isvalid (bool): Whether tag is valid or invalid, default to True.
+        msg (str): Message for tag.  Defaults to empty string, should be changed if isvalid is False.
+
+    """
     tag: Union[str, int] = attr.ib()
     isvalid: bool = attr.ib(default=True, init=False, validator=instance_of(bool))
     msg: str = attr.ib(default="", init=False, repr=False, validator=instance_of(str))
 
     @tag.validator
     def check_tag(self, attribute, value):
+        """Attrs based validator function for tag attribute.
+
+        Raises:
+            TypeError: TypeError if tag value is not int or str type.
+
+        """
         if not isinstance(value, str) and not isinstance(value, int):
             raise TypeError(
                 f"`tag` value must be of type 'int' or 'str', got " f"{type(value)!r}."
@@ -98,9 +174,22 @@ class Mark(object):
 
 @attr.s(auto_attribs=True, order=False, eq=False, slots=True)
 class CollegeLabel(Mark):
+    """Label class for College scoring event labels.
+
+    Args:
+        value (int): Numeric value for label, different than tag value.
+
+    """
     value: int = attr.ib(validator=instance_of(int), init=False, repr=False)
 
     def __attrs_post_init__(self):
+        """Post init hook function. 
+
+        This function checks if the label tag is considered a valid label based 
+        on college (folkstyle) ruleset.  If not it adjusts the 'isvalid' and 'msg'
+        attributes accordingly.
+
+        """
         if self.tag in self.valid_labels:
             self.value = self.points_dict[self.tag]
         else:  # invalid tag
@@ -110,10 +199,14 @@ class CollegeLabel(Mark):
             )
             self.isvalid = False
             self.msg = message
-            logger.info(message)
 
     @property
-    def valid_labels(self):
+    def valid_labels(self) -> Set:
+        """Set of valid scoring event labels based on current college ruleset.
+
+        Returns:
+            Set: Scoring events.
+        """
         return {
             "T2",
             "E1",
@@ -138,7 +231,12 @@ class CollegeLabel(Mark):
         }
 
     @property
-    def points_dict(self):
+    def points_dict(self) -> Dict:
+        """Dictionary of valid scoring event labels and their point values.
+
+        Returns:
+            Dict: Dictionary of labels and their corresponding point values.
+        """
         return {
             "T2": 2,
             "E1": 1,
@@ -165,9 +263,33 @@ class CollegeLabel(Mark):
 
 @attr.s(auto_attribs=True, order=False, eq=False, slots=True)
 class HSLabel(Mark):
+    """Label class for High School scoring event labels.
+
+    Args:
+        value (int): Numeric value for label, different than tag value.
+
+    """
     value: int = attr.ib(validator=instance_of(int), init=False, repr=False)
 
     def __attrs_post_init__(self):
+        """Post init hook function.
+
+        This function checks if the label tag is considered a valid label based
+        on high school ruleset.  If not it adjusts the 'isvalid' and 'msg'
+        attributes accordingly.
+
+        """
+
+    value: int = attr.ib(validator=instance_of(int), init=False, repr=False)
+
+    def __attrs_post_init__(self):
+        """Post init hook function.
+
+        This function checks if the label tag is considered a valid label based
+        on high school (folkstyle) ruleset.  If not it adjusts the 'isvalid' and 'msg'
+        attributes accordingly.
+
+        """
         if self.tag in self.valid_labels:
             self.value = self.points_dict[self.tag]
         else:  # invalid tag
@@ -177,10 +299,14 @@ class HSLabel(Mark):
             )
             self.isvalid = False
             self.msg = message
-            logger.info(message)
 
     @property
-    def valid_labels(self):
+    def valid_labels(self) -> Set:
+        """Set of valid scoring event labels based on current college ruleset.
+
+        Returns:
+            Set: Scoring events.
+        """
         return {
             "T2",
             "E1",
@@ -204,7 +330,12 @@ class HSLabel(Mark):
         }
 
     @property
-    def points_dict(self):
+    def points_dict(self) -> Dict:
+        """Dictionary of valid scoring event labels and their point values.
+
+        Returns:
+            Dict: Dictionary of labels and their corresponding point values.
+        """
         return {
             "T2": 2,
             "E1": 1,

@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-
 """Module for Events.
 
 This module builds the Events class with validation for its fields. When
@@ -31,6 +30,7 @@ def convert_event_name(name: str) -> str:
 
     Returns:
         str: Capitalized and stripped string.
+
     """
     if len(name) == 0:
         return "Generic Event"
@@ -62,6 +62,7 @@ class Event(object):
 
         Returns:
             str: Type of event.
+
         """
         return str(self._kind.tag)
 
@@ -80,5 +81,6 @@ class Event(object):
 
         Returns:
             Dict: Dictionary with the name and kind of the Event instance.
+
         """
         return dict(name=self.name, kind=self.kind, )
