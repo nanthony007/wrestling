@@ -148,3 +148,4 @@ cython_debug/
 .idea/sonarlint/
 .idea/vcs.xml
 .idea/wrestling.iml
+!/.vscode/
