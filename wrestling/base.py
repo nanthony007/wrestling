@@ -205,6 +205,7 @@ class CollegeLabel(Mark):
                 f"Invalid tag for 'College Label'. Expected one of "
                 f"{self.valid_labels!r}, got {self.tag!r}."
             )
+            self.point_value = 0
             self.isvalid = False
             self.msg = message
 
@@ -295,6 +296,7 @@ class HSLabel(Mark):
                 f"Invalid tag for 'College Label'. Expected one of "
                 f"{self.valid_labels!r}, got {self.tag!r}."
             )
+            self.point_value = 0
             self.isvalid = False
             self.msg = message
 
