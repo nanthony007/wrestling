@@ -189,7 +189,7 @@ class Match(object):
         """
         return sum(
             (
-                action.label.value
+                action.label.point_value
                 for action in getattr(self, "time_series")
                 if action.formatted_label.startswith(athlete_filter)
             )
