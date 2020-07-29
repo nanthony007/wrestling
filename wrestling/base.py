@@ -175,7 +175,7 @@ class Mark(object):
         """
         if not isinstance(value, str) and not isinstance(value, int):
             raise TypeError(
-                f"`tag` value must be of type 'int' or 'str', got {type(value)!r}."
+                f"`tag` value must be of type 'int' or 'str', got {type()!r}."
             )
 
 
@@ -184,11 +184,11 @@ class CollegeLabel(Mark):
     """Label class for College scoring event labels.
 
     Args:
-        value: Numeric value for label, different than tag value.
+        point_value: Numeric point value for label, different than tag value.
 
     """
 
-    value: int = attr.ib(validator=instance_of(int), init=False, repr=False)
+    point_value: int = attr.ib(validator=instance_of(int), init=False, repr=False)
 
     def __attrs_post_init__(self):
         """Post init hook function.
@@ -199,7 +199,7 @@ class CollegeLabel(Mark):
 
         """
         if self.tag in self.valid_labels:
-            self.value = self.points_dict[self.tag]
+            self.point_value = self.points_dict[self.tag]
         else:  # invalid tag
             message = (
                 f"Invalid tag for 'College Label'. Expected one of "
@@ -274,11 +274,11 @@ class HSLabel(Mark):
     """Label class for High School scoring event labels.
 
     Args:
-        value: Numeric value for label, different than tag value.
+        point_value: Numeric point value for label, different than tag value.
 
     """
 
-    value: int = attr.ib(validator=instance_of(int), init=False, repr=False)
+    point_value: int = attr.ib(validator=instance_of(int), init=False, repr=False)
 
     def __attrs_post_init__(self):
         """Post init hook function.
@@ -289,7 +289,7 @@ class HSLabel(Mark):
 
         """
         if self.tag in self.valid_labels:
-            self.value = self.points_dict[self.tag]
+            self.point_value = self.points_dict[self.tag]
         else:  # invalid tag
             message = (
                 f"Invalid tag for 'College Label'. Expected one of "
