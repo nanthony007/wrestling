@@ -14,7 +14,7 @@ Important notes:
 
 """
 
-from .base import CollegeLabel, HSLabel, Mark
+from .base import Mark, CollegeLabel, HSLabel, Result
 from .events import Event
 from .matches import CollegeMatch, HSMatch
 from .scoring import CollegeScoring, HSScoring
