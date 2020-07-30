@@ -32,8 +32,7 @@ def convert_to_title(name: str) -> str:
     return name.title().strip()
 
 
-# these all need to use Tag
-@attr.s(kw_only=True, auto_attribs=True, order=True, eq=True)
+@attr.s(kw_only=True, auto_attribs=True, order=True, eq=True, frozen=True, slots=True)
 class Wrestler(object):
     """Wrestler object.
 
