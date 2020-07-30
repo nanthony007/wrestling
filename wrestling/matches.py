@@ -13,7 +13,7 @@ Example:
 """
 
 from datetime import datetime
-from typing import Optional, Dict, Tuple, Union, Any
+from typing import Optional, Dict, Tuple, Union
 from urllib.parse import quote
 
 import attr
@@ -26,20 +26,23 @@ from wrestling.sequence import isvalid_sequence
 from wrestling.wrestlers import Wrestler
 
 
-@attr.s(frozen=True, slots=True, order=True, eq=True, kw_only=True, auto_attribs=True)
+@attr.s(slots=True, order=True, eq=True, kw_only=True, auto_attribs=True)
 class Match(object):
     """Match base class.
 
     Args:
         id (str): Match id.
         base_url (Optional[Union[str, None]]): Url to prepend to 'id', default to None.
-        event (Event): Event instance for the event the match occured at.
-        date (datetime): Datetime the match occured at.
+        event (Event): Event instance for the event the match occurred at.
+        date (datetime): Datetime the match occurred at.
         result (Result): Result of the match.
         overtime ([Optional[bool]]): If the match went into overtime, default to False.
-        focus (Wrestler): Wreslter instance for the primary wrestler.
+        focus (Wrestler): Wrestler instance for the primary wrestler.
         opponent (Wrestler): Wrestler instance for the opponent.
         weight (Mark): Weight class the match was contested at.
+        isvalid (bool): Whether the match is valid or has errors.
+        invalid_messages (tuple): Tuple of (brief) match error messages, can be empty.
+        invalid_count (int): Count of invalid Marks found in the match.
 
     Raises:
         ValueError: Overtime cannot be True if Result method is Tech.
@@ -68,10 +71,16 @@ class Match(object):
         validator=instance_of(Wrestler), order=False, repr=lambda x: x.name
     )
     _weight: base.Mark = attr.ib(validator=instance_of(base.Mark), repr=lambda x: x.tag)
+    isvalid: bool = attr.ib(init=False, repr=False, order=False, eq=False)
+    invalid_messages: Tuple = attr.ib(
+        init=False, factory=tuple, repr=False, order=False, eq=False
+    )
+    invalid_count: int = attr.ib(init=False, repr=False, order=False, eq=False)
 
     def __attrs_post_init__(self):
         """Post init function to call Mark input handlers."""
         self.check_weight_input()
+        self.isvalid = self.set_validity()
 
     @overtime.validator
     def check_overtime(self, attribute, value):
@@ -144,38 +153,51 @@ class Match(object):
         """Takedown differential.
 
         Returns:
-            int: Differnece in primary wrestler takedowns and opponent takedowns
+            int: Difference in primary wrestler takedowns and opponent takedowns
 
         """
         return getattr(self, "fT2", 0) - getattr(self, "oT2", 0)
 
-    @property
-    def isvalid(self) -> bool:
+    def set_validity(self) -> bool:
         """Identifies instance validity status.
+
+        This method returns boolean and is used in the attrs post_init hook to set the
+        instance 'isvalid' attribute. However, this method also sets the instance
+        'invalid_messages' and 'invalid_count' attributes according to the errors it
+        detects when searching the instance.
+
+        Any errors detected are input as brief descriptors into the
+        'invalid_messages' attribute of the instance.
+
+        The 'invalid_counts' is simply a count of how many errors were discovered.
 
         Returns:
             bool: True if all Marks are valid, else False (if any Marks are invalid).
 
         """
-        # match attrs, only weight
-        if isinstance(self._weight, base.Mark):
-            if not self._weight.isvalid:
-                return False
-        # ts attrs
+        messages = []
+        status = True
+        if isinstance(self._weight, base.Mark) and not self._weight.isvalid:
+            messages.append("Invalid weight class.")
+            status = False
         if not all((score.label.isvalid for score in getattr(self, "time_series"))):
-            return False
-        # event attrs
-        if isinstance(self.event._kind, base.Mark):
-            if not self.event._kind.isvalid:
-                return False
-        # wrestler attrs
-        if isinstance(self.focus._grade, base.Mark):
-            if not self.focus._grade.isvalid:
-                return False
-        if isinstance(self.opponent._grade, base.Mark):
-            if not self.opponent._grade.isvalid:
-                return False
-        return True
+            messages.append("Invalid time-series label.")
+            status = False
+        if isinstance(self.event._kind, base.Mark) and not self.event._kind.isvalid:
+            messages.append("Invalid event type.")
+            status = False
+        if isinstance(self.focus._grade, base.Mark) and not self.focus._grade.isvalid:
+            messages.append("Invalid focus grade.")
+            status = False
+        if (
+                isinstance(self.opponent._grade, base.Mark)
+                and not self.opponent._grade.isvalid
+        ):
+            messages.append("Invalid opponent grade.")
+            status = False
+        self.invalid_messages = tuple(messages)
+        self.invalid_count = len(messages)
+        return status
 
     def calculate_pts(self, athlete_filter: str) -> int:
         """Calculate total points scored.
@@ -251,7 +273,7 @@ class Match(object):
             )
 
 
-@attr.s(frozen=True, slots=True, order=True, eq=True, kw_only=True, auto_attribs=True)
+@attr.s(slots=True, order=True, eq=True, kw_only=True, auto_attribs=True)
 class CollegeMatch(Match):
     """Match for college ruleset.
 
@@ -287,7 +309,7 @@ class CollegeMatch(Match):
             raise ValueError(f"Time series sequence appears invalid...")
 
 
-@attr.s(frozen=True, slots=True, order=True, eq=True, kw_only=True, auto_attribs=True)
+@attr.s(slots=True, order=True, eq=True, kw_only=True, auto_attribs=True)
 class HSMatch(Match):
     """Match for college ruleset.
 
