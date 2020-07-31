@@ -56,6 +56,8 @@ class ScoringEvent(object):
         validator=[instance_of(str), in_(("red", "green"))], order=False, repr=False
     )
     period: int = attr.ib(validator=instance_of(int), order=False, repr=False)
+    focus_score: int = attr.ib(init=False, repr=False, order=False, eq=False)
+    opp_score: int = attr.ib(init=False, repr=False, order=False, eq=False)
 
     @property
     @abc.abstractmethod
@@ -113,6 +115,8 @@ class ScoringEvent(object):
             period=self.period,
             str_label=self.formatted_label,
             label=self.label,
+            focus_score=self.focus_score,
+            opp_score=self.opp_score,
         )
 
 

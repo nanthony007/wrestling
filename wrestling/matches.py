@@ -296,6 +296,7 @@ class CollegeMatch(Match):
     def __attrs_post_init__(self):
         """Post init function to call Mark input handlers from super-class."""
         Match.__attrs_post_init__(self)
+        self.add_college_ts_points()
 
     @time_series.validator
     def check_time_series(self, attribute, value):
@@ -307,6 +308,40 @@ class CollegeMatch(Match):
             )
         if not isvalid_sequence("college", value):
             raise ValueError(f"Time series sequence appears invalid...")
+    
+    def add_college_ts_points(self):
+        for i, score in enumerate(self.time_series):
+            if i == 0:
+                if score.formatted_label.startswith('f'):
+                    self.time_series[i].focus_score = self.time_series[i].label.point_value
+                    self.time_series[i].opp_score = 0
+                elif score.formatted_label.startswith('o'):
+                    self.time_series[i].focus_score = 0
+                    self.time_series[i].opp_score = self.time_series[i].label.point_value
+                continue
+            if score.formatted_label.startswith('f'):
+                self.time_series[i].focus_score = self.time_series[i].label.point_value + \
+                                            self.time_series[i - 1].focus_score
+                self.time_series[i].opp_score = self.time_series[i - 1].opp_score
+            elif score.formatted_label.startswith('o'):
+                self.time_series[i].focus_score = self.time_series[i - 1].focus_score
+                self.time_series[i].opp_score = self.time_series[i].label.point_value + self.time_series[i - 1].opp_score
+            else:
+                raise ValueError(
+                    f"Invalid `formatted_label`, expected startswith = 'o' or 'f', "
+                    f"got {score.formatted_label!r}")
+        self.time_series.insert(
+            0,
+            CollegeScoring(
+                time_stamp=time(hour=0, minute=0, second=0),
+                initiator='red',
+                focus_color='red',
+                period=1,
+                label=base.CollegeLabel('START')
+            )
+        )
+        return self.time_series
+
 
 
 @attr.s(slots=True, order=True, eq=True, kw_only=True, auto_attribs=True)
@@ -332,6 +367,7 @@ class HSMatch(Match):
     def __attrs_post_init__(self):
         """Post init function to call Mark input handlers from super-class."""
         Match.__attrs_post_init__(self)
+        self.add_hs_ts_points()
 
     @time_series.validator
     def check_time_series(self, attribute, value):
@@ -343,3 +379,36 @@ class HSMatch(Match):
             )
         if not isvalid_sequence("high school", value):
             raise ValueError(f"Time series sequence appears invalid...")
+
+    def add_hs_ts_points(self):
+        for i, score in enumerate(self.time_series):
+            if i == 0:
+                if score.formatted_label.startswith('f'):
+                    self.time_series[i].focus_score = self.time_series[i].label.point_value
+                    self.time_series[i].opp_score = 0
+                elif score.formatted_label.startswith('o'):
+                    self.time_series[i].focus_score = 0
+                    self.time_series[i].opp_score = self.time_series[i].label.point_value
+                continue
+            if score.formatted_label.startswith('f'):
+                self.time_series[i].focus_score = self.time_series[i].label.point_value + \
+                                            self.time_series[i - 1].focus_score
+                self.time_series[i].opp_score = self.time_series[i - 1].opp_score
+            elif score.formatted_label.startswith('o'):
+                self.time_series[i].focus_score = self.time_series[i - 1].focus_score
+                self.time_series[i].opp_score = self.time_series[i].label.point_value + self.time_series[i - 1].opp_score
+            else:
+                raise ValueError(
+                    f"Invalid `formatted_label`, expected startswith = 'o' or 'f', "
+                    f"got {score.formatted_label!r}")
+        self.time_series.insert(
+            0,
+            HSScoring(
+                time_stamp=time(hour=0, minute=0, second=0),
+                initiator='red',
+                focus_color='red',
+                period=1,
+                label=base.HSLabel('START')
+            )
+        )
+        return self.time_series

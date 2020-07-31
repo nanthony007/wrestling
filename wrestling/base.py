@@ -188,7 +188,7 @@ class CollegeLabel(Mark):
 
     """
 
-    point_value: int = attr.ib(validator=instance_of(int), init=False, repr=False)
+    point_value: int = attr.ib(init=False, repr=False)
 
     def __attrs_post_init__(self):
         """Post init hook function.
@@ -217,6 +217,7 @@ class CollegeLabel(Mark):
             Set: Scoring events.
         """
         return {
+            "START",
             "T2",
             "E1",
             "R2",
@@ -247,6 +248,7 @@ class CollegeLabel(Mark):
             Dict: Dictionary of labels and their corresponding point values.
         """
         return {
+            "START": 0,
             "T2": 2,
             "E1": 1,
             "R2": 2,
@@ -308,6 +310,7 @@ class HSLabel(Mark):
             Set: Scoring events.
         """
         return {
+            "START",
             "T2",
             "E1",
             "R2",
@@ -337,6 +340,7 @@ class HSLabel(Mark):
             Dict: Dictionary of labels and their corresponding point values.
         """
         return {
+            "START": 0,
             "T2": 2,
             "E1": 1,
             "R2": 2,
