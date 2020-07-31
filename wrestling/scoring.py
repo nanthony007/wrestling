@@ -56,13 +56,13 @@ class ScoringEvent(object):
         validator=[instance_of(str), in_(("red", "green"))], order=False, repr=False
     )
     period: int = attr.ib(validator=instance_of(int), order=False, repr=False)
-    focus_score: int = attr.ib(init=False, repr=False, order=False, eq=False)
-    opp_score: int = attr.ib(init=False, repr=False, order=False, eq=False)
+    focus_score: int = attr.ib(default=0, init=False, order=False, eq=False)
+    opp_score: int = attr.ib(default=0, init=False, order=False, eq=False)
 
     @property
     @abc.abstractmethod
     def label(self):
-        """Label of the action that occured."""
+        """Label of the action that occurred."""
         pass
 
     @time_stamp.validator
