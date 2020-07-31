@@ -12,7 +12,7 @@ Example:
 
 """
 
-from datetime import datetime
+from datetime import datetime, time
 from typing import Optional, Dict, Tuple, Union
 from urllib.parse import quote
 
@@ -341,8 +341,8 @@ class CollegeMatch(Match):
                 label=base.CollegeLabel('START')
             )
         )
-        return tuple(ts)
-
+        self.time_series = tuple(ts)
+        return True
 
 
 @attr.s(slots=True, order=True, eq=True, kw_only=True, auto_attribs=True)
@@ -413,4 +413,5 @@ class HSMatch(Match):
                 label=base.HSLabel('START')
             )
         )
-        return tuple(ts)
+        self.time_series = tuple(ts)
+        return True
