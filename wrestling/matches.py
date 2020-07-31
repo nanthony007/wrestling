@@ -330,7 +330,8 @@ class CollegeMatch(Match):
                 raise ValueError(
                     f"Invalid `formatted_label`, expected startswith = 'o' or 'f', "
                     f"got {score.formatted_label!r}")
-        self.time_series.insert(
+        ts = list(self.time_series)
+        ts.insert(
             0,
             CollegeScoring(
                 time_stamp=time(hour=0, minute=0, second=0),
@@ -340,7 +341,7 @@ class CollegeMatch(Match):
                 label=base.CollegeLabel('START')
             )
         )
-        return self.time_series
+        return tuple(ts)
 
 
 
@@ -401,7 +402,8 @@ class HSMatch(Match):
                 raise ValueError(
                     f"Invalid `formatted_label`, expected startswith = 'o' or 'f', "
                     f"got {score.formatted_label!r}")
-        self.time_series.insert(
+        ts = list(self.time_series)
+        ts.insert(
             0,
             HSScoring(
                 time_stamp=time(hour=0, minute=0, second=0),
@@ -411,4 +413,4 @@ class HSMatch(Match):
                 label=base.HSLabel('START')
             )
         )
-        return self.time_series
+        return tuple(ts)
