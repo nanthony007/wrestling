@@ -71,7 +71,7 @@ class Event(object):
         if self._kind.tag not in {"Tournament", "Dual Meet"}:
             message = (
                 f'Invalid Event type, expected one of "Tournament", '
-                f'"Dual Meet", got {self._kind.tag!r}.'
+                f'"Dual Meet", got {self._kind.tag}.'
             )
             self._kind.isvalid = False
             self._kind.msg = message

@@ -73,8 +73,8 @@ class Wrestler(object):
         if self._grade:
             if self._grade.tag not in base.YEARS:
                 message = (
-                    f"Invalid year, expected one of {base.YEARS}, "
-                    f"got {self._grade.tag!r}."
+                    f"Invalid year, expected one of {*base.YEARS,}, "
+                    f"got {self._grade.tag}."
                 )
                 self._grade.isvalid = False
                 self._grade.msg = message

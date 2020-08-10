@@ -203,7 +203,7 @@ class CollegeLabel(Mark):
         else:  # invalid tag
             message = (
                 f"Invalid tag for 'College Label'. Expected one of "
-                f"{self.valid_labels!r}, got {self.tag!r}."
+                f"{*self.valid_labels,}, got {self.tag}."
             )
             self.point_value = 0
             self.isvalid = False
@@ -295,8 +295,8 @@ class HSLabel(Mark):
             self.point_value = self.points_dict[self.tag]
         else:  # invalid tag
             message = (
-                f"Invalid tag for 'College Label'. Expected one of "
-                f"{self.valid_labels!r}, got {self.tag!r}."
+                f"Invalid tag for 'High School Label'. Expected one of "
+                f"{*self.valid_labels,}, got {self.tag}."
             )
             self.point_value = 0
             self.isvalid = False
