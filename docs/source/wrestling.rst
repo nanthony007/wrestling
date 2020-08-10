@@ -1,6 +1,15 @@
 wrestling package
 =================
 
+Module contents
+---------------
+
+.. automodule:: wrestling
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 Submodules
 ----------
 
@@ -48,15 +57,6 @@ wrestling.wrestlers module
 --------------------------
 
 .. automodule:: wrestling.wrestlers
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: wrestling
    :members:
    :undoc-members:
    :show-inheritance:
