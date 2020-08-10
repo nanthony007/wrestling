@@ -13,6 +13,7 @@ Example:
 """
 
 from datetime import datetime, time
+from collections import Counter
 from typing import Optional, Dict, Tuple, Union
 from urllib.parse import quote
 
@@ -103,7 +104,7 @@ class Match(object):
         if not self._weight.tag.isdigit():
             message = (
                 f"Invalid weight value, expected a number, "
-                f"got {self._weight.tag!r}."
+                f"got {self._weight.tag}."
             )
             self._weight.isvalid = False
             self._weight.msg = message
@@ -156,7 +157,8 @@ class Match(object):
             int: Difference in primary wrestler takedowns and opponent takedowns
 
         """
-        return getattr(self, "fT2", 0) - getattr(self, "oT2", 0)
+        counts = Counter((score.formatted_label for score in self.time_series))
+        return counts.get('fT2', 0) - counts.get('oT2', 0)
 
     def set_validity(self) -> bool:
         """Identifies instance validity status.
