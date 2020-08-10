@@ -74,8 +74,8 @@ def check_neutral(score: Union[CollegeScoring, HSScoring], seq: Set[str]):
         # invalid
         score.label.isvalid = False
         score.label.msg = (
-            f"Not a valid neutral move, expected one of {seq}, "
-            f"but got {score.formatted_label!r}."
+            f"Not a valid neutral move, expected one of {*seq,}, "
+            f"but got {score.formatted_label}."
         )
 
 
@@ -91,8 +91,8 @@ def check_top(score: Union[CollegeScoring, HSScoring], seq: Set[str]):
         # invalid
         score.label.isvalid = False
         score.label.msg = (
-            f"Not a valid top move, expected one of {seq}, "
-            f"but got {score.formatted_label!r}."
+            f"Not a valid top move, expected one of {*seq,}, "
+            f"but got {score.formatted_label}."
         )
 
 
@@ -108,8 +108,8 @@ def check_bottom(score: Union[CollegeScoring, HSScoring], seq: Set[str]):
         # invalid
         score.label.isvalid = False
         score.label.msg = (
-            f"Not a valid bottom move, expected one of {seq}, "
-            f"but got {score.formatted_label!r}."
+            f"Not a valid bottom move, expected one of {*seq,}, "
+            f"but got {score.formatted_label}."
         )
 
 
@@ -148,9 +148,9 @@ def isvalid_sequence(
             )
         if position == "neutral":
             check_neutral(score, sequences["neutral"])
-            if score.formatted_label == "fT2" or score.formatted_label == "oBOT":
+            if score.formatted_label == "fT2" or score.formatted_label == "oBOT" or score.formatted_label == 'fTOP':
                 position = "top"
-            elif score.formatted_label == "oT2" or score.formatted_label == "fBOT":
+            elif score.formatted_label == "oT2" or score.formatted_label == "fBOT" or score.formatted_label == 'oTOP':
                 position = "bottom"
         elif position == "top":
             check_top(score, sequences["top"])
