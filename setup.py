@@ -13,7 +13,7 @@ requirements = ["attrs", ]
 
 setup(
     name="wrestling",
-    version="0.2.12",
+    version="0.3.0",
     author="Nicholas Anthony",
     author_email="nanthony007@gmail.com",
     description="A package for wrestling statistics.",
@@ -22,5 +22,4 @@ setup(
     url="https://github.com/nanthony007/wrestling/",
     packages=find_packages(),
     install_requires=requirements,
-    # classifiers=[],  # add later
 )
