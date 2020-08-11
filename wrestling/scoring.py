@@ -48,7 +48,7 @@ class ScoringEvent(object):
 
     """
 
-    time_stamp: Union[time, str] = attr.ib(validator=instance_of(time, str), order=True)
+    time_stamp: Union[time, str] = attr.ib(validator=instance_of((time, str)), order=True)
     initiator: str = attr.ib(
         validator=[instance_of(str), in_(("red", "green"))], order=False,
     )

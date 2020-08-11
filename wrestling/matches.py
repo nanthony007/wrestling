@@ -58,7 +58,7 @@ class Match(object):
     event: Event = attr.ib(
         validator=instance_of(Event), repr=lambda x: x.name, order=False
     )
-    datetime_: Union[str, datetime] = attr.ib(validator=instance_of(datetime, str), order=True, repr=False)
+    date: Union[str, datetime] = attr.ib(validator=instance_of((datetime, str)), order=True, repr=False)
     result: base.Result = attr.ib(
         validator=instance_of(base.Result), order=False, repr=lambda x: x.text
     )
