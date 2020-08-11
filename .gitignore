@@ -149,3 +149,17 @@ cython_debug/
 .idea/vcs.xml
 .idea/wrestling.iml
 !/.vscode/
+.idea/.name
+.idea/mypy.xml
+.idea/pylint.xml
+.idea/vagrant.xml
+.idea/wrestlingPackage.iml
+.idea/dictionaries/nick.xml
+.vscode/launch.json
+.vscode/settings.json
+.vscode/tasks.json
+.DS_Store
+all_events.p
+all_logins.p
+all_matches.p
+all_rosters.p
