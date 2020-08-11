@@ -9,14 +9,6 @@ These instructions will get you a copy of the project up and running on your loc
 ### Docs
 Documentation live on ReadTheDocs [here](https://wrestling.readthedocs.io/en/latest/source/wrestling.html#module-wrestling)
 
-### Prerequisites
-
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
-
 ### Installing
 
 In order to install this project you must have a working installation of python and the pip package manager.
