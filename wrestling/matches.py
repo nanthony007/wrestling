@@ -336,7 +336,7 @@ class CollegeMatch(Match):
         ts.insert(
             0,
             CollegeScoring(
-                time_stamp=time(hour=0, minute=0, second=0),
+                time_stamp=str(time(hour=0, minute=0, second=0)),
                 initiator='red',
                 focus_color='red',
                 period=1,
@@ -408,7 +408,7 @@ class HSMatch(Match):
         ts.insert(
             0,
             HSScoring(
-                time_stamp=time(hour=0, minute=0, second=0),
+                time_stamp=str(time(hour=0, minute=0, second=0)),
                 initiator='red',
                 focus_color='red',
                 period=1,
