@@ -8,7 +8,7 @@ validation, the Mark class is used in replace of traditional str or int classes 
 track accuracy.
 
 Example:
-    match = CollegeMatch(**kwargs)
+    >>>match = CollegeMatch(**kwargs)
 
 """
 
@@ -58,7 +58,7 @@ class Match(object):
     event: Event = attr.ib(
         validator=instance_of(Event), repr=lambda x: x.name, order=False
     )
-    date: datetime = attr.ib(validator=instance_of(datetime), order=True, repr=False)
+    datetime_: Union[str, datetime] = attr.ib(validator=[instance_of(datetime), instance_of(str)], order=True, repr=False)
     result: base.Result = attr.ib(
         validator=instance_of(base.Result), order=False, repr=lambda x: x.text
     )
@@ -258,7 +258,7 @@ class Match(object):
                 weight=getattr(self, "weight"),
                 event_name=getattr(self, "event").name,
                 event_type=getattr(self, "event").kind,
-                date=datetime.strftime(getattr(self, "date"), "%Y-%m-%d %H:%M:%S"),
+                date=str(getattr(self, 'date')),
                 text_result=getattr(self, "result").text,
                 num_result=getattr(self, "result").value,
                 duration=getattr(self, "duration"),
