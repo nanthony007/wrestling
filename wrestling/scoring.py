@@ -8,7 +8,7 @@ validation, the Mark class is used in replace of traditional
 str or int classes to track accuracy.
 
 Example:
-    scoring_event = CollegeScoring(
+    >>>scoring_event = CollegeScoring(
         time_stamp=time(hour=0, minute=5, second=15),
         initiator='red',
         focus_color='green',
@@ -48,7 +48,7 @@ class ScoringEvent(object):
 
     """
 
-    time_stamp: time = attr.ib(validator=instance_of(time), order=True)
+    time_stamp: Union[time, str] = attr.ib(validator=[instance_of(time), instance_of(str)], order=True)
     initiator: str = attr.ib(
         validator=[instance_of(str), in_(("red", "green"))], order=False,
     )
@@ -68,8 +68,8 @@ class ScoringEvent(object):
     @time_stamp.validator
     def check_time_stamp(self, attribute, val):
         """Attrs validator, checks timestamp that hour is not zero."""
-        if val.hour != 0:
-            raise ValueError(f"`hour` field of timestamp must be 0 (zero).")
+        if str(val).split(':')[0] != '00':
+                raise ValueError(f"`hour` field of timestamp must be 0 (zero).")
 
     @property
     def formatted_time(self) -> str:
@@ -79,7 +79,7 @@ class ScoringEvent(object):
             str: Minute:Second string formatted time_stamp.
 
         """
-        return time.strftime(self.time_stamp, "%M:%S")
+        return str(self.time_stamp)[3:]
 
     @property
     def formatted_label(self) -> str:
