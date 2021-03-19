@@ -71,6 +71,10 @@ class Wrestler(object):
     def grade_input_handler(self) -> None:
         """Function to manage validity of 'grade' input attribute via Mark class."""
         if self._grade:
+            if self.name == "Forfeit,":
+                self._grade.tag = "Fr."
+                self._grade.isvalid = True
+                self._grade.msg = ""
             if self._grade.tag not in base.YEARS:
                 message = (
                     f"Invalid year, expected one of {*base.YEARS,}, "

@@ -14,7 +14,6 @@ from typing import Dict, Set, Union
 import attr
 from attr.validators import instance_of
 
-# eligibility
 YEARS = {
     "Fr.",
     "So.",
@@ -37,7 +36,6 @@ of acceptable years of eligibility.
 """
 
 
-# result section
 class Result(enum.IntEnum):
     """Enumeration class for match Results.
 
