@@ -227,7 +227,7 @@ class CollegeLabel(Mark):
             "WS",
             "S1",
             "S2",
-            "RO1",
+            "RT1",
             "BOT",
             "TOP",
             "NEU",
