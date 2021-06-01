@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "wrestling"
+version = "1.1"
+description = "A package for managing wrestling statistics and data."
+authors = ["Nick Anthony <nanthony007@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+attrs = "^20.3.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.2"
+black = "^20.8b1"
+isort = "^5.7.0"
+pytest-cov = "^2.11.1"
+flake8 = "^3.8.4"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
