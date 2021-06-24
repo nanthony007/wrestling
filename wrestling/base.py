@@ -15,22 +15,31 @@ import attr
 from attr.validators import instance_of
 
 YEARS = {
-    "Fr.",
-    "So.",
-    "Jr.",
-    "Sr.",
-    "RS Fr.",
-    "RS So.",
-    "RS Jr.",
-    "RS Sr.",
-    "7",
-    "8",
-    "9",
-    "10",
-    "11",
-    "12",
+    "-1": "Unknown",
+    "0": "K",
+    "1": "1st",
+    "2": "2nd",
+    "3": "3rd",
+    "4": "4th",
+    "5": "5th",
+    "6": "6th",
+    "7": "7th",
+    "8": "8th",
+    "9": "9th",
+    "10": "10th",
+    "11": "11th",
+    "12": "12th",
+    "13": "Fr.",
+    "15": "So.",
+    "17": "Jr.",
+    "19": "Sr.",
+    "14": "RS Fr.",
+    "16": "RS So.",
+    "18": "RS Jr.",
+    "20": "RS Sr.",
+
 }
-"""str: Module level variable containing string variants
+"""dict[int, str]: Module level variable containing string variants
 of acceptable years of eligibility.
 
 """

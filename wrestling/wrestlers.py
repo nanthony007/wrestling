@@ -65,19 +65,19 @@ class Wrestler(object):
             str: Grade/Eligbility of athlete.
         """
         if self._grade:
-            return str(self._grade.tag)
+            return base.YEARS.get(self._grade.tag)
         return str(self._grade)
 
     def grade_input_handler(self) -> None:
         """Function to manage validity of 'grade' input attribute via Mark class."""
         if self._grade:
             if self.name == "Forfeit,":
-                self._grade.tag = "Fr."
+                self._grade.tag = -1
                 self._grade.isvalid = True
                 self._grade.msg = ""
-            if self._grade.tag not in base.YEARS:
+            if self._grade.tag not in base.YEARS.keys():
                 message = (
-                    f"Invalid year, expected one of {*base.YEARS,}, "
+                    f"Invalid year, expected one of {*list(base.YEARS.keys()),}, "
                     f"got {self._grade.tag}."
                 )
                 self._grade.isvalid = False
