@@ -1,6 +1,5 @@
 [tool.poetry]
 name = "wrestling"
-version = "1.1"
 description = "A package for managing wrestling statistics and data."
 authors = ["Nick Anthony <nanthony007@gmail.com>"]
 license = "MIT"
