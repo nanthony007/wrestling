@@ -49,7 +49,7 @@ class Wrestler(object):
     team: str = attr.ib(
         converter=convert_to_title, validator=instance_of(str), order=False
     )
-    _grade: Optional[Union[base.Mark, None]] = attr.ib(
+    _grade: Union[int, None] = attr.ib(
         default=None, order=False, eq=False,
     )
 
@@ -58,30 +58,21 @@ class Wrestler(object):
         self.grade_input_handler()
 
     @property
-    def grade(self) -> str:
+    def grade_str(self) -> str:
         """Eligibility of athlete.
 
         Returns:
             str: Grade/Eligbility of athlete.
         """
         if self._grade:
-            return base.YEARS.get(self._grade.tag)
+            return base.YEARS[self._grade]
         return str(self._grade)
 
     def grade_input_handler(self) -> None:
         """Function to manage validity of 'grade' input attribute via Mark class."""
         if self._grade:
             if self.name == "Forfeit,":
-                self._grade.tag = -1
-                self._grade.isvalid = True
-                self._grade.msg = ""
-            if self._grade.tag not in base.YEARS.keys():
-                message = (
-                    f"Invalid year, expected one of {*list(base.YEARS.keys()),}, "
-                    f"got {self._grade.tag}."
-                )
-                self._grade.isvalid = False
-                self._grade.msg = message
+                self._grade = -1
 
     def to_dict(self) -> Dict[str, str]:
         """Creates a dictionary representation of an Wrestler instance.
@@ -90,4 +81,4 @@ class Wrestler(object):
             Dict: Dictionary with the name, team, and grade of the Wrestler instance.
 
         """
-        return dict(name=self.name, team=self.team, grade=self.grade)
+        return dict(name=self.name, team=self.team, grade=self.grade_str)
