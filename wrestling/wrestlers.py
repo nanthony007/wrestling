@@ -64,7 +64,7 @@ class Wrestler(object):
         Returns:
             str: Grade/Eligbility of athlete.
         """
-        return str(self.grade_int)
+        return base.YEARS.get(self.grade_int, '')
 
     def grade_input_handler(self) -> None:
         """Function to manage validity of 'grade' input attribute via Mark class."""
