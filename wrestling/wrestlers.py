@@ -39,7 +39,7 @@ class Wrestler(object):
     Args:
         name (str): Name of the wrestler. Ex: Last, First.
         team (str): Team the wrestler represents.
-        grade (Union[Mark, None]): Grade/eligibility of the wrestler, default to None.
+        grade (Union[int, None]): Grade/eligibility of the wrestler, default to None.
 
     """
 
@@ -49,7 +49,7 @@ class Wrestler(object):
     team: str = attr.ib(
         converter=convert_to_title, validator=instance_of(str), order=False
     )
-    _grade: Union[int, None] = attr.ib(
+    grade_int: Union[int, None] = attr.ib(
         default=None, order=False, eq=False,
     )
 
@@ -64,15 +64,13 @@ class Wrestler(object):
         Returns:
             str: Grade/Eligbility of athlete.
         """
-        if self._grade:
-            return base.YEARS[self._grade]
-        return str(self._grade)
+        return str(self.grade_int)
 
     def grade_input_handler(self) -> None:
         """Function to manage validity of 'grade' input attribute via Mark class."""
-        if self._grade:
+        if self.grade_int:
             if self.name == "Forfeit,":
-                self._grade = -1
+                self.grade_int = -1
 
     def to_dict(self) -> Dict[str, str]:
         """Creates a dictionary representation of an Wrestler instance.

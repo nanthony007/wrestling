@@ -188,15 +188,6 @@ class Match(object):
         if isinstance(self.event._kind, base.Mark) and not self.event._kind.isvalid:
             messages.append("Invalid event type.")
             status = False
-        if isinstance(self.focus._grade, base.Mark) and not self.focus._grade.isvalid:
-            messages.append("Invalid focus grade.")
-            status = False
-        if (
-                isinstance(self.opponent._grade, base.Mark)
-                and not self.opponent._grade.isvalid
-        ):
-            messages.append("Invalid opponent grade.")
-            status = False
         self.invalid_messages = tuple(messages)
         self.invalid_count = len(messages)
         return status
