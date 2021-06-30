@@ -34,8 +34,8 @@ _always = [
     "oWS",
     "oS1",
     "oS2",
-    "fRO1",
-    "oRO1",
+    "fRT1",
+    "oRT1",
 ]
 _college_focus_top = ["fN2", "fN4", "oE1", "oR2"]
 _college_focus_bottom = ["oN2", "oN4", "fE1", "fR2"]
