@@ -267,7 +267,7 @@ class CollegeLabel(Mark):
             "WS": 0,
             "S1": 1,
             "S2": 2,
-            "RO1": 1,
+            "RT1": 1,
             "BOT": 0,
             "TOP": 0,
             "NEU": 0,
