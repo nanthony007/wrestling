@@ -13,7 +13,7 @@ requirements = ["attrs", ]
 
 setup(
     name="wrestling",
-    version="0.4.5",
+    version="0.4.6",
     author="Nicholas Anthony",
     author_email="nanthony007@gmail.com",
     description="A package for wrestling statistics.",
