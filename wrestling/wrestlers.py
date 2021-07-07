@@ -49,13 +49,9 @@ class Wrestler(object):
     team: str = attr.ib(
         converter=convert_to_title, validator=instance_of(str), order=False
     )
-    grade_int: Union[int, None] = attr.ib(
-        default=None, order=False, eq=False,
+    grade_int: int = attr.ib(
+        default=-1, order=False, eq=False,
     )
-
-    def __attrs_post_init__(self):
-        """Post init function to call Mark input handlers."""
-        self.grade_input_handler()
 
     @property
     def grade_str(self) -> str:
@@ -65,12 +61,6 @@ class Wrestler(object):
             str: Grade/Eligbility of athlete.
         """
         return base.YEARS.get(self.grade_int, '')
-
-    def grade_input_handler(self) -> None:
-        """Function to manage validity of 'grade' input attribute via Mark class."""
-        if self.grade_int:
-            if self.name == "Forfeit,":
-                self.grade_int = -1
 
     def to_dict(self) -> Dict[str, str]:
         """Creates a dictionary representation of an Wrestler instance.
