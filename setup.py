@@ -9,11 +9,13 @@ this_directory = path.abspath(path.dirname(__file__))
 with open(path.join(this_directory, "README.md")) as f:
     long_description = f.read()
 
-requirements = ["attrs", ]
+requirements = [
+    "attrs",
+]
 
 setup(
     name="wrestling",
-    version="0.4.6",
+    version="0.4.7",
     author="Nicholas Anthony",
     author_email="nanthony007@gmail.com",
     description="A package for wrestling statistics.",
