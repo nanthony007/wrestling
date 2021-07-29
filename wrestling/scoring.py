@@ -49,6 +49,7 @@ class ScoringEvent(object):
     """
 
     time_stamp: Union[time, str] = attr.ib(validator=instance_of((time, str)), order=True)
+    # TODO can probably remove these two fields
     initiator: str = attr.ib(
         validator=[instance_of(str), in_(("red", "green"))], order=False,
     )
@@ -81,6 +82,7 @@ class ScoringEvent(object):
         """
         return str(self.time_stamp)[3:]
 
+    # TODO: this will then need adjusting/removal
     @property
     def formatted_label(self) -> str:
         """String formatted label.

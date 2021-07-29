@@ -37,7 +37,6 @@ YEARS = {
     16: "RS So.",
     18: "RS Jr.",
     20: "RS Sr.",
-
 }
 """dict[int, str]: Module level variable containing string variants
 of acceptable years of eligibility.
@@ -241,10 +240,11 @@ class CollegeLabel(Mark):
             "TOP",
             "NEU",
             "DEFER",
-            "Fall",
-            "Tech Fall",
-            "Forfeit",
-            "Default",
+            "FALL",
+            "TECH",
+            "FORFEIT",
+            "DEFAULT",
+            "DISQ",
         }
 
     @property
@@ -272,10 +272,11 @@ class CollegeLabel(Mark):
             "TOP": 0,
             "NEU": 0,
             "DEFER": 0,
-            "Fall": 0,
-            "Tech Fall": 0,
-            "Forfeit": 0,
-            "Default": 0,
+            "FALL": 0,
+            "TECH": 0,
+            "FORFEIT": 0,
+            "DEFAULT": 0,
+            "DISQ": 0,
         }
 
 
@@ -333,10 +334,11 @@ class HSLabel(Mark):
             "TOP",
             "NEU",
             "DEFER",
-            "Fall",
-            "Tech Fall",
-            "Forfeit",
-            "Default",
+            "FALL",
+            "TECH",
+            "FORFEIT",
+            "DEFAULT",
+            "DISQ",
         }
 
     @property
@@ -363,8 +365,9 @@ class HSLabel(Mark):
             "TOP": 0,
             "NEU": 0,
             "DEFER": 0,
-            "Fall": 0,
-            "Tech Fall": 0,
-            "Forfeit": 0,
-            "Default": 0,
+            "FALL": 0,
+            "TECH": 0,
+            "FORFEIT": 0,
+            "DEFAULT": 0,
+            "DISQ": 0,
         }
